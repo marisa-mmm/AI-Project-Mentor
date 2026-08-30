@@ -1,28 +1,43 @@
 from pydantic import BaseModel, Field
-from typing import Dict, Any
+from typing import List, Optional
+
+class RawIdeaInput(BaseModel):
+    raw_idea: str = Field(..., description="1-2 sentence initial raw thought from the student")
+
+class StudentProfile(BaseModel):
+    level: str = Field(..., description="Beginner, Intermediate, or Advanced")
+    suggested_name: str
+    suggested_domain: str
+    questions: List[str]
 
 class ProjectInput(BaseModel):
-    name: str = Field(..., example="AccessMeet")
-    problem: str = Field(..., example="Deaf individuals face communication barriers in virtual calls.")
-    domain: str = Field(..., example="Computer Vision / AI")
-    technologies: str = Field(..., example="Python, FastAPI, YOLO, Streamlit, MongoDB")
-    duration_months: int = Field(default=4, ge=1, le=12)
+    name: str
+    domain: str
+    duration_months: int
+    target_role: str = "Full-Stack AI Engineer"
+    problem_statement: str
+    preferred_tech: Optional[str] = "Open to recommendation"
 
-class WeeklyUpdateInput(BaseModel):
-    project_name: str
-    week_number: int
-    tasks_completed: str
-    current_blockers: str
-
-class MasterBlueprint(BaseModel):
+class ProjectBlueprint(BaseModel):
     project_details: ProjectInput
+    novelty_score: dict
     idea_evaluation: str
     scope_definition: str
     technology_stack: str
+    architecture_diagram: str
     timeline_milestones: str
     risk_assessment: str
-    viva_prep: str
-    architecture_diagram: str
-    novelty_score: Dict[str, Any]
     documentation_plan: str
-    final_mentor_verdict: str
+    faculty_feedback: Optional[str] = None
+    approval_status: str = "Pending Review"  
+
+class ProgressUpdate(BaseModel):
+    project_name: str
+    week_number: int
+    completed_tasks: str
+    blockers: str
+
+class FacultyReviewInput(BaseModel):
+    project_name: str
+    status: str  
+    comments: str
