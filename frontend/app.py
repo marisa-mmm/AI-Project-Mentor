@@ -340,28 +340,92 @@ if user.get("role") != "Faculty / Mentor":
 
 if user.get("role") == "Faculty / Mentor":
     with tabs[0]:
-        st.subheader("👩‍🏫 Faculty Review Board")
-        if st.button("Refresh Submissions"):
+        st.subheader("👩‍🏫 Faculty Review & Evaluation Board")
+        if st.button("🔄 Refresh Submissions", key="fac_refresh_btn"):
             st.rerun()
+            
         f_res = requests.get(f"{API_BASE}/faculty/blueprints")
         if f_res.status_code == 200 and f_res.json():
-            for item in f_res.json():
-                det = item["project_details"]
-                p_id = det["name"]
-                with st.expander(f"📌 {p_id} | Student: {item.get('user_email')} | Status: {item.get('approval_status')}"):
-                    st.write(f"**Domain:** {det['domain']} | **Duration:** {det['duration_months']} Months")
-                    st.write(f"**Problem:** {det['problem_statement']}")
-                    st.markdown("#### Idea Evaluation")
-                    st.write(item["idea_evaluation"])
-                    
-                    with st.form(f"fac_form_{p_id}"):
-                        new_stat = st.selectbox("Status", ["Approved", "Needs Revision", "Rejected"], key=f"s_{p_id}")
-                        feed = st.text_area("Mentor Remarks", value=item.get("faculty_feedback", ""), key=f"f_{p_id}")
-                        if st.form_submit_button("Submit Academic Review"):
-                            requests.post(f"{API_BASE}/faculty/review", json={
-                                "project_name": p_id, "status": new_stat, "comments": feed
-                            })
-                            st.success(f"Review recorded for {p_id}!")
-                            st.rerun()
+            for idx, item in enumerate(f_res.json(), start=1):
+                det = item.get("project_details", {})
+                p_name = det.get("name", f"Project_{idx}")
+                student_mail = item.get("user_email", "Unassigned")
+                current_status = item.get("approval_status", "Pending Review")
+                
+                with st.expander(f"📌 {p_name} | Student: {student_mail} | Status: {current_status}"):
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.write(f"**Domain:** {det.get('domain', 'N/A')}")
+                        st.write(f"**Duration:** {det.get('duration_months', 0)} Months")
+                        st.write(f"**Target Role:** {det.get('target_role', 'Engineer')}")
+                    with c2:
+                        nov_val = item.get("novelty_score", {}).get("novelty_score", "N/A")
+                        nov_stat = item.get("novelty_score", {}).get("status", "")
+                        st.write(f"**Novelty Score:** {nov_val}% ({nov_stat})")
+                        st.write(f"**Submission Date:** {item.get('created_at', 'N/A')}")
+
+                    st.markdown("#### Problem Statement & Context")
+                    st.write(det.get("problem_statement", "N/A"))
+
+                    st.markdown("#### AI Council Idea Evaluation")
+                    st.write(item.get("idea_evaluation", "N/A"))
+
+                    st.markdown("#### Tech Stack & Architecture")
+                    st.write(item.get("technology_stack", "N/A"))
+
+                    with st.form(f"fac_form_{idx}_{p_name}"):
+                        st.markdown("---")
+                        st.markdown("##### 📝 Submit Faculty Feedback")
+                        
+                        status_options = ["Approved", "Needs Revision", "Rejected"]
+                        default_index = status_options.index(current_status) if current_status in status_options else 0
+                        
+                        new_stat = st.selectbox(
+                            "Evaluation Verdict", 
+                            status_options, 
+                            index=default_index, 
+                            key=f"sel_stat_{idx}_{p_name}"
+                        )
+                        feed = st.text_area(
+                            "Mentor Remarks / Corrections Needed", 
+                            value=item.get("faculty_feedback", ""), 
+                            key=f"txt_feed_{idx}_{p_name}",
+                            height=100
+                        )
+                        
+                        if st.form_submit_button("💾 Save Review & Notify Student", use_container_width=True):
+                            rev_payload = {
+                                "project_name": p_name,
+                                "status": new_stat,
+                                "comments": feed
+                            }
+                            post_res = requests.post(f"{API_BASE}/faculty/review", json=rev_payload)
+                            if post_res.status_code == 200:
+                                st.success(f"Review recorded for {p_name}!")
+                                st.rerun()
+                            else:
+                                st.error("Failed to update status on server.")
         else:
             st.info("No student blueprints submitted yet.")
+
+    with tabs[1]:
+        st.subheader("📜 All Blueprints Academic Repository")
+        st.caption("Central institutional archive of all submitted student specifications.")
+        
+        arch_res = requests.get(f"{API_BASE}/faculty/blueprints")
+        if arch_res.status_code == 200 and arch_res.json():
+            for idx, item in enumerate(arch_res.json(), start=1):
+                det = item.get("project_details", {})
+                p_name = det.get("name", f"Project_{idx}")
+                
+                with st.expander(f"📁 {idx}. {p_name} ({det.get('domain', 'N/A')}) — {item.get('approval_status', 'Pending')}"):
+                    st.write(f"**Author:** {item.get('user_email', 'N/A')}")
+                    st.write(f"**Created:** {item.get('created_at', 'N/A')}")
+                    st.markdown("**Core Scope:**")
+                    st.write(item.get("scope_definition", "N/A"))
+                    st.markdown("**Milestone Plan:**")
+                    st.write(item.get("timeline_milestones", "N/A"))
+                    if item.get("faculty_feedback"):
+                        st.info(f"**Faculty Remarks:** {item['faculty_feedback']}")
+        else:
+            st.info("No projects in archive.")
