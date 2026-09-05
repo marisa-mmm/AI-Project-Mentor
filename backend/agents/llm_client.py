@@ -1,28 +1,53 @@
 import os
+import time
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from google.genai.errors import ServerError, APIError
 from sentence_transformers import SentenceTransformer, util
 
 load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
 hf_embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
+FALLBACK_MODELS = [
+    "gemini-2.5-flash-lite",
+    "gemini-flash-lite-latest",
+    "gemini-2.5-flash",
+    "gemini-flash-latest"
+]
+
 def call_llm(prompt: str, system_prompt: str = "You are an expert academic project mentor.", max_tokens: int = 8192) -> str:
-    """Uses gemini-1.5-flash with 8192 tokens for deep completeness and zero quota issues."""
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            max_output_tokens=max_tokens,
-            temperature=0.3
-        )
-    )
-    return response.text
+    """Calls Gemini with automatic fallback across high-capacity models to bypass 503 server overloads."""
+    last_error = None
+    
+    for model_name in FALLBACK_MODELS:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    max_output_tokens=max_tokens,
+                    temperature=0.3
+                )
+            )
+            if response and response.text:
+                return response.text
+        except (ServerError, APIError) as e:
+            last_error = e
+            time.sleep(0.5)
+            continue
+        except Exception as e:
+            last_error = e
+            break
+
+    raise RuntimeError(f"All Gemini fallback models exhausted: {last_error}")
 
 def compute_novelty(user_text: str, reference_corpus: list) -> dict:
+    """Calculates cosine similarity locally without external API calls."""
     if not reference_corpus:
         return {"novelty_score": 100.0, "status": "Unique Idea", "max_similarity": 0.0}
     
