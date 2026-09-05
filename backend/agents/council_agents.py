@@ -2,19 +2,19 @@ import json
 from backend.agents.llm_client import call_llm
 
 # ==========================================
-# 1. DISCOVERY & PROFILER AGENT
+# 1. ADAPTIVE DISCOVERY & PROFILER AGENT
 # ==========================================
 def student_profiler_agent(raw_idea: str) -> dict:
-    """Analyzes a 1-2 line raw idea, estimates skill level, and generates adaptive questions."""
+    """Analyzes raw idea and selected level to generate tailored questions."""
     prompt = f"""You are an Expert AI Student Profiler.
-Raw Idea: "{raw_idea}"
+Input from student: "{raw_idea}"
 
 Task:
-1. Classify the user level into: "Beginner", "Intermediate", or "Advanced".
-2. Based on the level:
-   - If Beginner: Generate 3 simple, non-technical questions (problem, platform, data).
-   - If Intermediate: Generate 4 practical technical questions (APIs, framework choice, scope).
-   - If Advanced: Generate 5 deep architecture questions (scalability, ML model pipeline, real-time latency).
+1. Determine or reflect the user level into: "Beginner", "Intermediate", or "Advanced".
+2. Generate targeted questions matching the competence level:
+   - If Beginner: Ask 4 simple questions covering (1. Core Idea clarity, 2. Problem Statement, 3. Expected Outcome, 4. Preferred Duration in months).
+   - If Intermediate: Ask 5 practical questions covering (1. Detailed Idea, 2. Preferred Technologies/Languages, 3. Expected Outcome, 4. Preferred Duration, 5. Scope boundaries/Limits).
+   - If Advanced: Ask 5 deep questions covering (1. System Architecture & Model Pipeline, 2. Production Technologies, 3. Sub-domain specialization, 4. Expected Outcome/Metrics, 5. Timeline Duration).
 3. Suggest a formal Academic Project Name and Domain.
 
 Return strictly valid JSON with this exact schema (no markdown fences, no extra text):
@@ -25,7 +25,8 @@ Return strictly valid JSON with this exact schema (no markdown fences, no extra 
   "questions": [
     "Question 1",
     "Question 2",
-    "Question 3"
+    "Question 3",
+    "Question 4"
   ]
 }}"""
     raw_res = call_llm(prompt, system_prompt="You are a strict JSON generator. Return only raw valid JSON.", max_tokens=1000)
@@ -35,93 +36,144 @@ Return strictly valid JSON with this exact schema (no markdown fences, no extra 
 # ==========================================
 # 2. IDEA EVALUATION AGENT
 # ==========================================
-def idea_evaluation_agent(name: str, domain: str, problem: str) -> str:
-    prompt = f"""Evaluate this academic engineering project:
-Project Name: {name}
-Domain: {domain}
-Problem Statement: {problem}
+def idea_agent(project) -> str:
+    prompt = f"""You are an AI Project Idea Agent.
+Analyze this student project:
+Project Name:
+{project.name}
+Problem:
+{project.problem_statement}
+Domain:
+{project.domain}
 
-Provide:
-1. Core Feasibility (Can a student build this in college?)
-2. Real-World Value & Target Users
-3. Academic Evaluation Strengths for Final Year Defense"""
-    return call_llm(prompt, system_prompt="You are an Academic Project Evaluator. Be direct, structured, and concise.")
+Tell me:
+1. Is this a good academic project?
+2. What problem does it solve?
+3. Who will use it?
+4. What can make the project innovative?
+
+Keep the explanation simple."""
+    return call_llm(prompt, system_prompt="You are an Academic Project Idea Evaluator. Keep explanations simple.")
 
 # ==========================================
 # 3. SCOPE DEFINITION AGENT
 # ==========================================
-def scope_definition_agent(name: str, problem: str, user_answers: str) -> str:
-    prompt = f"""Define clear engineering boundaries for:
-Project: {name}
-Problem: {problem}
-Context from Student: {user_answers}
+def scope_agent(project) -> str:
+    prompt = f"""You are an AI Project Scope Agent.
+Project:
+{project.name}
+Problem:
+{project.problem_statement}
 
-Provide:
-1. Top 5 MVP Functional Features (What must be built)
-2. Scope Boundaries (System limits)
-3. Non-Goals (Explicit list of features the student should NOT attempt to build to avoid deadline failure)"""
-    return call_llm(prompt, system_prompt="You are a Technical Scope Architect.")
+Define:
+1. Project objective
+2. 5 important features
+3. Project scope
+4. What should not be included (Non-goals)
+5. Expected output
+
+Use simple language."""
+    return call_llm(prompt, system_prompt="You are an Academic Scope Specialist.")
 
 # ==========================================
-# 4. FULL-STACK TECH ARCHITECT AGENT
+# 4. TECHNOLOGY SELECTION AGENT
 # ==========================================
-def tech_stack_agent(name: str, domain: str, preferred_tech: str) -> str:
-    prompt = f"""Provide a complete full-stack tech recommendation for:
-Project: {name} ({domain})
-Student Preference: {preferred_tech}
+def technology_agent(project) -> str:
+    prompt = f"""You are a Technology Selection Agent.
+Student Project:
+{project.name}
+Domain:
+{project.domain}
+Current technologies:
+{project.preferred_tech}
 
-Break down into:
-- Frontend (UI/UX framework)
-- Backend (API runtime & web server)
-- Database (SQL vs NoSQL with justification)
-- Real-Time / API Integration (Protocols & libraries)
-- ML / AI Tools (Pre-trained models vs custom training)
-- Free Deployment Platforms (Zero-cost hosting options)"""
-    return call_llm(prompt, system_prompt="You are a Senior Full-Stack Architect.")
+Recommend suitable technologies for this project.
+Include:
+1. Programming language
+2. AI/ML technology
+3. Database
+4. Backend
+5. Frontend
+6. Deployment platform
+
+For every technology, explain WHY it is useful.
+Keep it beginner friendly."""
+    return call_llm(prompt, system_prompt="You are a Senior Technology Advisor.")
 
 # ==========================================
 # 5. MERMAID ARCHITECTURE GENERATOR
 # ==========================================
-def mermaid_architecture_agent(name: str, domain: str) -> str:
-    prompt = f"""Generate a Mermaid.js flowchart (graph TD) for the architecture of:
-Project: {name} ({domain})
+def mermaid_architecture_agent(project) -> str:
+    prompt = f"""Generate a clean Mermaid.js flowchart (graph TD) for the architecture of:
+Project: {project.name}
+Domain: {project.domain}
+Tech Stack: {project.preferred_tech}
 
-Include: Client UI -> API Gateway/Backend -> Processing/ML Engine -> Database Storage.
-Output ONLY the raw Mermaid code inside ```mermaid ... ``` codeblock."""
+Include: Client UI -> API Backend -> Core Engine / ML -> Database.
+Output ONLY the raw Mermaid code block."""
     return call_llm(prompt, system_prompt="You generate valid Mermaid.js diagrams only.")
 
 # ==========================================
-# 6. TIMELINE & MILESTONE AGENT (User Duration Bound)
+# 6. TIMELINE & PLANNING AGENT
 # ==========================================
-def timeline_agent(name: str, duration_months: int) -> str:
-    prompt = f"""Create a month-by-month sprint milestone roadmap for:
-Project: {name}
-Total Duration: {duration_months} Months
+def planning_agent(project) -> str:
+    prompt = f"""You are an Academic Project Planning Agent.
+Project:
+{project.name}
+Duration:
+{project.duration_months} Months
 
-Breakdown by month:
-- Month 1 to {duration_months}: Concrete deliverables, integration milestones, testing deadlines, and report write-up windows."""
+Create a project roadmap.
+Divide the project into monthly milestones across {project.duration_months} months.
+For each month provide:
+- Month Number
+- Task
+- Expected output
+
+Also include testing and final documentation deadlines."""
     return call_llm(prompt, system_prompt="You are an Agile Academic Project Manager.")
 
 # ==========================================
-# 7. RISK ASSESSMENT AGENT
+# 7. RISK MANAGEMENT AGENT
 # ==========================================
-def risk_assessment_agent(name: str, domain: str) -> str:
-    prompt = f"""Identify top technical risks for:
-Project: {name} ({domain})
+def risk_agent(project) -> str:
+    prompt = f"""You are a Project Risk Management Agent.
+Project:
+{project.name}
+Domain:
+{project.domain}
 
 List:
-1. Top 3 Technical Failure Points (e.g., API limits, data scarcity, compute constraints)
-2. Practical Fallbacks & Mitigation Strategies for each."""
-    return call_llm(prompt, system_prompt="You are a Software Reliability & Risk Specialist.")
+1. Top 3 Technical Failure Points (e.g., rate limits, compute constraints, lack of dataset)
+2. Simple Fallbacks & Mitigation Steps for each."""
+    return call_llm(prompt, system_prompt="You are a Technical Risk Analyst.")
 
 # ==========================================
 # 8. DOCUMENTATION & THESIS AGENT
 # ==========================================
-def documentation_agent(name: str, domain: str) -> str:
-    prompt = f"""Provide a comprehensive 14-section Thesis / Project Report Outline for:
-Project: {name} ({domain})
+def documentation_agent(project) -> str:
+    prompt = f"""You are a Project Documentation Agent.
+Project:
+{project.name}
 
-List chapters from Abstract, Literature Survey, System Architecture, UML, Results, to References."""
+Create a Documentation structure.
+Include:
+1. Abstract
+2. Introduction
+3. Problem Statement
+4. Objectives
+5. Literature Review
+6. Methodology
+7. System Architecture
+8. Technologies
+9. Implementation
+10. Testing
+11. Results
+12. Future Scope
+13. Conclusion
+14. References
+
+Explain briefly what should be written in each section."""
     return call_llm(prompt, system_prompt="You are an Academic Documentation Specialist.")
 
 # ==========================================

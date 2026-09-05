@@ -8,10 +8,11 @@ load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+# Local CPU-based embedding model
 hf_embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
 def call_llm(prompt: str, system_prompt: str = "You are an expert academic project mentor.", max_tokens: int = 2000) -> str:
-    """Executes high-speed inference with gemini-2.5-flash using structured instructions."""
+    """Executes inference with gemini-2.5-flash."""
     response = client.models.generate_content(
         model="gemini-2.5-flash",
         contents=prompt,
@@ -23,7 +24,7 @@ def call_llm(prompt: str, system_prompt: str = "You are an expert academic proje
     )
     return response.text
 
-def compute_novelty(user_text: str, reference_corpus: list[str]) -> dict:
+def compute_novelty(user_text: str, reference_corpus: list) -> dict:
     """Calculates semantic cosine similarity to detect project originality."""
     if not reference_corpus:
         return {"novelty_score": 100.0, "status": "Unique Idea", "max_similarity": 0.0}
@@ -35,7 +36,7 @@ def compute_novelty(user_text: str, reference_corpus: list[str]) -> dict:
     novelty = round((1.0 - max_sim) * 100, 2)
     
     return {
-        "novelty_score": novelty,
+        "novelty_score": max(0.0, min(100.0, novelty)),
         "max_similarity": round(max_sim * 100, 2),
         "status": "High Novelty" if novelty >= 55 else "Moderate / High Overlap"
     }
