@@ -3,6 +3,7 @@ from backend.database import client, save_blueprint, get_all_blueprints
 print("--- Testing Database Atlas Integration ---")
 if client:
     mock_data = {
+        "user_email": "test_student@example.com",
         "project_details": {
             "name": "AccessMeet Test",
             "domain": "Computer Vision",
@@ -18,10 +19,13 @@ if client:
         "timeline_milestones": "Month 1: Dataset, Month 2: Pipeline",
         "risk_assessment": "Low latency required.",
         "documentation_plan": "Standard 14 chapter synopsis.",
+        "code_starter_pack": "# Starter code",
+        "cost_estimation": "Free tier",
+        "created_at": "2026-09-05 21:50",
         "approval_status": "Pending Review"
     }
     save_blueprint(mock_data)
-    print("Mock blueprint saved successfully.")
+    print("✅ Mock blueprint saved successfully to Atlas!")
     
     all_projects = get_all_blueprints()
-    print(f"Total blueprints retrieved from Atlas: {len(all_projects)}")
+    print(f"✅ Total blueprints retrieved from Atlas: {len(all_projects)}")
