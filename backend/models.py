@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
-# --- Phase 1: Interactive Discovery Models ---
 class RawIdeaInput(BaseModel):
     raw_idea: str = Field(..., description="Raw thought or idea from the student")
 
@@ -11,7 +10,6 @@ class StudentProfile(BaseModel):
     suggested_domain: str
     questions: List[str]
 
-# --- Phase 2: Full Blueprint Generation Models ---
 class ProjectInput(BaseModel):
     name: str
     domain: str
@@ -33,7 +31,6 @@ class ProjectBlueprint(BaseModel):
     faculty_feedback: Optional[str] = None
     approval_status: str = "Pending Review"
 
-# --- Phase 3: Weekly Progress & Faculty Models ---
 class ProgressUpdate(BaseModel):
     project_name: str
     week_number: int

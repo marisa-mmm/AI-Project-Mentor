@@ -1,9 +1,6 @@
 import json
 from backend.agents.llm_client import call_llm
 
-# ==========================================
-# 1. ADAPTIVE DISCOVERY & PROFILER AGENT
-# ==========================================
 def student_profiler_agent(raw_idea: str) -> dict:
     """Analyzes raw idea and selected level to generate tailored questions."""
     prompt = f"""You are an Expert AI Student Profiler.
@@ -33,9 +30,6 @@ Return strictly valid JSON with this exact schema (no markdown fences, no extra 
     cleaned = raw_res.replace("```json", "").replace("```", "").strip()
     return json.loads(cleaned)
 
-# ==========================================
-# 2. IDEA EVALUATION AGENT
-# ==========================================
 def idea_agent(project) -> str:
     prompt = f"""You are an AI Project Idea Agent.
 Analyze this student project:
@@ -55,9 +49,6 @@ Tell me:
 Keep the explanation simple."""
     return call_llm(prompt, system_prompt="You are an Academic Project Idea Evaluator. Keep explanations simple.")
 
-# ==========================================
-# 3. SCOPE DEFINITION AGENT
-# ==========================================
 def scope_agent(project) -> str:
     prompt = f"""You are an AI Project Scope Agent.
 Project:
@@ -75,9 +66,6 @@ Define:
 Use simple language."""
     return call_llm(prompt, system_prompt="You are an Academic Scope Specialist.")
 
-# ==========================================
-# 4. TECHNOLOGY SELECTION AGENT
-# ==========================================
 def technology_agent(project) -> str:
     prompt = f"""You are a Technology Selection Agent.
 Student Project:
@@ -100,9 +88,6 @@ For every technology, explain WHY it is useful.
 Keep it beginner friendly."""
     return call_llm(prompt, system_prompt="You are a Senior Technology Advisor.")
 
-# ==========================================
-# 5. MERMAID ARCHITECTURE GENERATOR
-# ==========================================
 def mermaid_architecture_agent(project) -> str:
     prompt = f"""Generate a clean Mermaid.js flowchart (graph TD) for the architecture of:
 Project: {project.name}
@@ -113,9 +98,6 @@ Include: Client UI -> API Backend -> Core Engine / ML -> Database.
 Output ONLY the raw Mermaid code block."""
     return call_llm(prompt, system_prompt="You generate valid Mermaid.js diagrams only.")
 
-# ==========================================
-# 6. TIMELINE & PLANNING AGENT
-# ==========================================
 def planning_agent(project) -> str:
     prompt = f"""You are an Academic Project Planning Agent.
 Project:
@@ -133,9 +115,6 @@ For each month provide:
 Also include testing and final documentation deadlines."""
     return call_llm(prompt, system_prompt="You are an Agile Academic Project Manager.")
 
-# ==========================================
-# 7. RISK MANAGEMENT AGENT
-# ==========================================
 def risk_agent(project) -> str:
     prompt = f"""You are a Project Risk Management Agent.
 Project:
@@ -148,9 +127,6 @@ List:
 2. Simple Fallbacks & Mitigation Steps for each."""
     return call_llm(prompt, system_prompt="You are a Technical Risk Analyst.")
 
-# ==========================================
-# 8. DOCUMENTATION & THESIS AGENT
-# ==========================================
 def documentation_agent(project) -> str:
     prompt = f"""You are a Project Documentation Agent.
 Project:
@@ -176,9 +152,6 @@ Include:
 Explain briefly what should be written in each section."""
     return call_llm(prompt, system_prompt="You are an Academic Documentation Specialist.")
 
-# ==========================================
-# 9. WEEKLY PROGRESS TRACKING AGENT
-# ==========================================
 def progress_tracking_agent(project_name: str, week: int, completed: str, blockers: str) -> str:
     prompt = f"""Analyze this student's weekly project status:
 Project: {project_name} | Week: {week}

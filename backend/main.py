@@ -30,7 +30,6 @@ app.add_middleware(
 def health_check():
     return {"status": "running", "engine": "gemini-2.5-flash", "db_connected": database.client is not None}
 
-# --- 1. Discovery Endpoint ---
 @app.post("/api/start-discovery")
 async def start_discovery(payload: RawIdeaInput):
     try:
@@ -39,11 +38,9 @@ async def start_discovery(payload: RawIdeaInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Discovery failed: {str(e)}")
 
-# --- 2. Master Blueprint Generation ---
 @app.post("/api/generate-blueprint")
 async def generate_blueprint(payload: ProjectInput):
     try:
-        # Paced execution to stay well within free-tier rate limits
         idea_eval = council_agents.idea_agent(payload)
         await asyncio.sleep(1.2)
         
@@ -64,7 +61,6 @@ async def generate_blueprint(payload: ProjectInput):
         
         docs = council_agents.documentation_agent(payload)
 
-        # Vector Novelty Calculation
         existing_blueprints = database.get_all_blueprints()
         reference_corpus = [
             b.get("project_details", {}).get("problem_statement", "") 
@@ -92,7 +88,6 @@ async def generate_blueprint(payload: ProjectInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Pipeline Execution Failed: {str(e)}")
 
-# --- 3. Weekly Progress Endpoint ---
 @app.post("/api/track-progress")
 async def track_progress(payload: ProgressUpdate):
     try:
@@ -106,7 +101,6 @@ async def track_progress(payload: ProgressUpdate):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# --- 4. Faculty Endpoints ---
 @app.get("/api/faculty/blueprints")
 async def get_faculty_blueprints():
     try:

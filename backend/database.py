@@ -28,7 +28,6 @@ except Exception as e:
     client = None
     db = None
 
-# --- Database Operations (CRUD) ---
 
 def save_blueprint(blueprint_data: dict) -> bool:
     """Inserts or updates a student project blueprint."""

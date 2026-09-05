@@ -4,7 +4,6 @@ import requests
 st.set_page_config(page_title="AI Project Mentor & Faculty Council", layout="wide", page_icon="🎓")
 API_BASE = "http://localhost:8000/api"
 
-# High-visibility styling for readability
 st.markdown("""
     <style>
     html, body, [class*="css"] {
@@ -39,11 +38,7 @@ tab_student, tab_progress, tab_faculty = st.tabs([
     "👩‍🏫 Faculty Evaluation Portal"
 ])
 
-# ==========================================
-# TAB 1: STUDENT BLUEPRINT WIZARD
-# ==========================================
 with tab_student:
-    # --- STEP 1: RAW IDEA & LEVEL SELECTION ---
     if st.session_state.step == 1:
         st.subheader("💡 Step 1: Tell Us What You Want to Build")
         st.write("Select your level and enter a 1–2 line idea. The AI Profiler will adapt its questions to your background.")
@@ -74,7 +69,6 @@ with tab_student:
             else:
                 st.warning("Please enter an idea first.")
 
-    # --- STEP 2: ADAPTIVE DISCOVERY QUESTIONS ---
     elif st.session_state.step == 2:
         data = st.session_state.discovery_data
         st.subheader("🎯 Step 2: Refining Your Project Requirements")
@@ -131,7 +125,6 @@ with tab_student:
                 except Exception as e:
                     st.error(f"Backend call failed: {e}")
 
-    # --- STEP 3: FULL BLUEPRINT DASHBOARD ---
     elif st.session_state.step == 3:
         bp = st.session_state.blueprint
         details = bp["project_details"]
@@ -221,9 +214,6 @@ Novelty Score: {nov['novelty_score']}% ({nov['status']})
                 mime="text/markdown"
             )
 
-# ==========================================
-# TAB 2: WEEKLY PROGRESS TRACKER
-# ==========================================
 with tab_progress:
     st.subheader("📈 Weekly Progress Check-In")
     st.write("Submit weekly updates. The AI Mentor will assign a health status and suggest solutions for blockers.")
@@ -252,9 +242,6 @@ with tab_progress:
         else:
             st.warning("Please fill in project name and completed tasks.")
 
-# ==========================================
-# TAB 3: FACULTY EVALUATION PORTAL
-# ==========================================
 with tab_faculty:
     st.subheader("👩‍🏫 Faculty & Mentor Review Portal")
     st.write("Review all submitted student blueprints, approve scopes, and provide feedback directly.")
