@@ -2,6 +2,7 @@ import os
 import hashlib
 from typing import Optional, List, Dict, Any
 from pymongo import MongoClient
+import certifi
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,24 +18,33 @@ progress_col = None
 
 try:
     if MONGO_URI:
-        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-        client.server_info()
+        client = MongoClient(
+            MONGO_URI,
+            tlsCAFile=certifi.where(),
+            serverSelectionTimeoutMS=10000
+        )
+        client.admin.command('ping')
         db = client[DB_NAME]
         users_col = db["users"]
         blueprints_col = db["blueprints"]
         progress_col = db["progress_reports"]
-        print(" Connected successfully to MongoDB Atlas!")
+        print("✅ Connected successfully to MongoDB Atlas via Secure TLS!")
     else:
-        print(" Warning: MONGO_URI is missing in .env file.")
+        print("⚠️ Warning: MONGO_URI is missing in .env file.")
 except Exception as e:
-    print(f" MongoDB Atlas connection failed: {e}")
+    print(f"❌ MongoDB Atlas connection failed: {e}")
+    client = None
+    db = None
+    users_col = None
+    blueprints_col = None
+    progress_col = None
 
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
 def register_user(username: str, email: str, password: str, role: str) -> Dict[str, Any]:
     if users_col is None:
-        return {"success": False, "error": "Database unavailable"}
+        return {"success": False, "error": "Database connection is not active. Check Atlas network/IP whitelist."}
     if users_col.find_one({"email": email}):
         return {"success": False, "error": "User with this email already exists"}
     

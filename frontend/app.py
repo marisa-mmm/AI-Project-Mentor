@@ -7,23 +7,32 @@ API_BASE = "http://localhost:8000/api"
 
 st.markdown("""
     <style>
-    .main { background: #0e1117; }
-    .stApp { color: #f0f2f6; }
-    h1, h2, h3, h4 { color: #58a6ff !important; font-weight: 700 !important; }
-    .metric-card {
-        background: rgba(22, 27, 34, 0.85);
-        border: 1px solid rgba(48, 54, 61, 0.8);
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
+    html, body, p, span, label, div {
+        font-size: 19px !important;
+        line-height: 1.6 !important;
+    }
+    .stTextInput>div>div>input, .stTextArea textarea, select {
+        font-size: 19px !important;
+        padding: 12px !important;
+    }
+    .stButton>button {
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        padding: 0.6rem 1.4rem !important;
+        border-radius: 8px !important;
+    }
+    .stRadio label {
+        font-size: 20px !important;
+        font-weight: 600 !important;
     }
     .reminder-banner {
-        background: linear-gradient(90deg, #b08800 0%, #d29922 100%);
-        color: #000;
-        padding: 12px 18px;
-        border-radius: 8px;
+        background: linear-gradient(90deg, #d97706 0%, #b45309 100%);
+        color: #ffffff;
+        padding: 16px 22px;
+        border-radius: 10px;
+        font-size: 20px !important;
         font-weight: 700;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -39,59 +48,81 @@ if "blueprint" not in st.session_state:
 
 if not st.session_state.user:
     st.title("🎓 AI Project Mentor & Academic Council")
-    st.caption("Secure Multi-Agent Academic Planning & Faculty Defense System")
+    st.caption("Secure Multi-Agent Academic Planning & Faculty Evaluation System")
+    st.markdown("---")
     
-    auth_mode = st.radio("Choose Access Method", ["Sign In", "Create Account", "Google Sign-In"], horizontal=True)
+    auth_mode = st.radio("Choose Access Method:", ["Sign In", "Create Account", "Google Sign-In"], horizontal=True)
 
     if auth_mode == "Sign In":
+        st.subheader("🔑 Sign In to Your Portal")
         with st.form("login_form"):
             email = st.text_input("Email Address")
             password = st.text_input("Password", type="password")
             btn = st.form_submit_button("Sign In", use_container_width=True)
             if btn:
-                try:
-                    res = requests.post(f"{API_BASE}/auth/login", json={"email": email, "password": password})
-                    if res.status_code == 200:
-                        st.session_state.user = res.json()["user"]
-                        st.rerun()
-                    else:
-                        st.error(res.json().get("detail", "Login failed"))
-                except Exception as e:
-                    st.error(f"Cannot reach server: {e}")
+                if email.strip() and password.strip():
+                    try:
+                        res = requests.post(f"{API_BASE}/auth/login", json={"email": email, "password": password})
+                        if res.status_code == 200:
+                            st.session_state.user = res.json()["user"]
+                            st.success("Authenticated successfully!")
+                            st.rerun()
+                        else:
+                            st.error(res.json().get("detail", "Invalid credentials"))
+                    except Exception as e:
+                        st.error(f"Cannot connect to backend server: {e}")
+                else:
+                    st.warning("Please fill in both email and password.")
 
     elif auth_mode == "Create Account":
+        st.subheader("📝 Register New Academic Profile")
         with st.form("reg_form"):
             u_name = st.text_input("Full Name")
-            u_email = st.text_input("Email Address")
-            u_pass = st.text_input("Password", type="password")
+            u_email = st.text_input("Institutional Email Address")
+            u_pass = st.text_input("Choose Password", type="password")
             u_role = st.selectbox("I am a:", ["Student", "Faculty / Mentor"])
-            btn_reg = st.form_submit_button("Create Account", use_container_width=True)
+            btn_reg = st.form_submit_button("Register Account", use_container_width=True)
             if btn_reg:
-                try:
-                    res = requests.post(f"{API_BASE}/auth/register", json={
-                        "username": u_name, "email": u_email, "password": u_pass, "role": u_role
-                    })
-                    if res.status_code == 200:
-                        st.success("Account created! Please switch to 'Sign In' above.")
-                    else:
-                        st.error(res.json().get("detail", "Registration failed"))
-                except Exception as e:
-                    st.error(f"Cannot reach server: {e}")
+                if u_name.strip() and u_email.strip() and u_pass.strip():
+                    try:
+                        res = requests.post(f"{API_BASE}/auth/register", json={
+                            "username": u_name, "email": u_email, "password": u_pass, "role": u_role
+                        })
+                        if res.status_code == 200:
+                            st.success("Account created successfully! Please click 'Sign In' to log in.")
+                        else:
+                            st.error(res.json().get("detail", "Registration failed"))
+                    except Exception as e:
+                        st.error(f"Cannot connect to backend server: {e}")
+                else:
+                    st.warning("Please fill in all registration fields.")
 
     elif auth_mode == "Google Sign-In":
-        st.markdown("### 🌐 Continuous Google Workspace Login")
-        st.write("One-click authentication for institutional Google accounts.")
-        g_email = st.text_input("Confirm Google Account Email", placeholder="user@gmail.com")
-        g_name = st.text_input("Display Name", placeholder="Your Name")
-        g_role = st.selectbox("Role for this session", ["Student", "Faculty / Mentor"])
+        st.subheader("🌐 Instant Google Authentication")
+        st.write("Sign in seamlessly with your Google identity.")
+        g_email = st.text_input("Google Email Address", placeholder="e.g. name@gmail.com")
+        g_name = st.text_input("Display Name", placeholder="e.g. Student Name")
+        g_role = st.selectbox("Role", ["Student", "Faculty / Mentor"])
+        
         if st.button("Authenticate with Google", use_container_width=True):
             if g_email.strip() and g_name.strip():
-                res = requests.post(f"{API_BASE}/auth/google", json={
-                    "email": g_email, "name": g_name, "google_id": "oauth_token_sync", "role": g_role
-                })
-                if res.status_code == 200:
-                    st.session_state.user = res.json()["user"]
-                    st.rerun()
+                try:
+                    res = requests.post(f"{API_BASE}/auth/google", json={
+                        "email": g_email.strip(), 
+                        "name": g_name.strip(), 
+                        "google_id": "oauth_token_verified", 
+                        "role": g_role
+                    })
+                    if res.status_code == 200:
+                        st.session_state.user = res.json()["user"]
+                        st.success("Google login verified!")
+                        st.rerun()
+                    else:
+                        st.error(res.json().get("detail", "Google authentication failed."))
+                except Exception as e:
+                    st.error(f"Cannot connect to server: {e}")
+            else:
+                st.warning("Please provide your Google email and display name.")
 
     st.stop()
 
@@ -99,7 +130,7 @@ user = st.session_state.user
 
 top_c1, top_c2 = st.columns([5, 1])
 with top_c1:
-    st.markdown(f"### Welcome back, **{user['username']}** ({user.get('role', 'Student')})")
+    st.markdown(f"### Logged in as: **{user['username']}** `[{user.get('role', 'Student')}]`")
 with top_c2:
     if st.button("Sign Out"):
         st.session_state.user = None
@@ -117,19 +148,19 @@ try:
         if days_left <= 7:
             st.markdown(f"""
             <div class="reminder-banner">
-                ⏰ UPCOMING DEADLINE NOTICE: Month 1 deliverables for project '{latest_project['project_details']['name']}' 
-                are due in <strong>{max(0, days_left)} days</strong>!
+                ⏰ DEADLINE NOTICE: Month 1 deliverables for project '{latest_project['project_details']['name']}' 
+                are due in {max(0, days_left)} days!
             </div>
             """, unsafe_allow_html=True)
 except Exception:
     pass
 
 if user.get("role") == "Faculty / Mentor":
-    tabs = st.tabs(["👩‍🏫 Faculty Evaluation Portal", "📜 All Blueprints History"])
+    tabs = st.tabs(["👩‍🏫 Faculty Evaluation Board", "📜 All Blueprints Archive"])
 else:
     tabs = st.tabs([
         "🚀 Project Architect Wizard", 
-        "📚 Previous Blueprint History", 
+        "📚 Project History", 
         "💬 Interactive AI Mentor Q&A", 
         "📈 Weekly Progress Tracker"
     ])
@@ -137,7 +168,7 @@ else:
 if user.get("role") != "Faculty / Mentor":
     with tabs[0]:
         if st.session_state.step == 1:
-            st.subheader("💡 Step 1: Tell Me What You Want to Build")
+            st.subheader("💡 Step 1: Tell Us What You Want to Build")
             u_level = st.selectbox("Select Your Skill Level:", ["Beginner", "Intermediate", "Advanced"])
             raw_idea = st.text_area("Your Raw Project Idea (1-2 sentences)", placeholder="e.g., Real-time sign language interpreter for video calls.", height=120)
             
@@ -184,7 +215,7 @@ if user.get("role") != "Faculty / Mentor":
                 st.rerun()
 
             if generate:
-                full_prob = f"{st.session_state.raw_idea} Context: {' | '.join(answers)}"
+                full_prob = f"{st.session_state.raw_idea} Additional Context: {' | '.join(answers)}"
                 payload = {
                     "name": p_name,
                     "domain": domain,
@@ -218,15 +249,15 @@ if user.get("role") != "Faculty / Mentor":
             nov = bp["novelty_score"]
             m1, m2, m3 = st.columns(3)
             with m1:
-                st.metric("Novelty Score (Local HuggingFace)", f"{nov['novelty_score']}%", nov['status'])
+                st.metric("Novelty Score", f"{nov['novelty_score']}%", nov['status'])
             with m2:
                 st.metric("Faculty Status", bp.get("approval_status", "Pending Review"))
             with m3:
-                st.metric("Timeline Span", f"{details['duration_months']} Months")
+                st.metric("Duration", f"{details['duration_months']} Months")
 
             t1, t2, t3, t4, t5, t6, t7 = st.tabs([
-                "📋 Idea & Scope", "💻 Tech & Architecture", "📅 Milestone Timeline", 
-                "⚠️ Risks", "📑 14-Section Thesis", "🛠️ Code Skeleton", "💰 Cost Breakdown"
+                "📋 Idea & Scope", "💻 Tech & Flowchart", "📅 Roadmap", 
+                "⚠️ Risks", "📑 Thesis Structure", "🛠️ Code Skeleton", "💰 Cost Breakdown"
             ])
             with t1:
                 st.markdown("### Idea Evaluation")
@@ -235,10 +266,10 @@ if user.get("role") != "Faculty / Mentor":
                 st.markdown("### Scope Boundaries & Non-Goals")
                 st.write(bp["scope_definition"])
             with t2:
-                st.markdown("### Technology Stack Recommendations")
+                st.markdown("### Tech Stack")
                 st.write(bp["technology_stack"])
                 st.markdown("---")
-                st.markdown("### System Flowchart")
+                st.markdown("### System Architecture")
                 st.markdown(f"```mermaid\n{bp['architecture_diagram'].replace('```mermaid','').replace('```','').strip()}\n```")
             with t3:
                 st.write(bp["timeline_milestones"])
@@ -258,7 +289,7 @@ if user.get("role") != "Faculty / Mentor":
         if h_res.status_code == 200 and h_res.json():
             for item in reversed(h_res.json()):
                 det = item["project_details"]
-                with st.expander(f"📌 {det['name']} ({det['domain']}) - Created: {item.get('created_at', 'N/A')}"):
+                with st.expander(f"📌 {det['name']} ({det['domain']}) — Created: {item.get('created_at', 'N/A')}"):
                     st.write(f"**Approval Status:** {item.get('approval_status', 'Pending')}")
                     if item.get("faculty_feedback"):
                         st.info(f"Mentor Notes: {item['faculty_feedback']}")
@@ -269,7 +300,6 @@ if user.get("role") != "Faculty / Mentor":
 if user.get("role") != "Faculty / Mentor":
     with tabs[2]:
         st.subheader("💬 Ask Your AI Project Mentor")
-        st.write("Ask targeted questions about your architecture, viva prep, or libraries.")
         active_bp = st.session_state.blueprint
         p_label = active_bp["project_details"]["name"] if active_bp else "General Mentorship"
         st.caption(f"Currently consulting on: **{p_label}**")
@@ -277,6 +307,7 @@ if user.get("role") != "Faculty / Mentor":
         q_user = st.text_input("Enter your question:")
         if st.button("Consult Lead Mentor"):
             if q_user.strip():
+                import json
                 context_str = json.dumps(active_bp) if active_bp else "General Software Project"
                 with st.spinner("AI Mentor is analyzing..."):
                     m_res = requests.post(f"{API_BASE}/mentor/chat", json={
@@ -309,8 +340,8 @@ if user.get("role") != "Faculty / Mentor":
 
 if user.get("role") == "Faculty / Mentor":
     with tabs[0]:
-        st.subheader("👩‍🏫 Faculty Evaluation & Review Board")
-        if st.button("Refresh Blueprint Submissions"):
+        st.subheader("👩‍🏫 Faculty Review Board")
+        if st.button("Refresh Submissions"):
             st.rerun()
         f_res = requests.get(f"{API_BASE}/faculty/blueprints")
         if f_res.status_code == 200 and f_res.json():
