@@ -1,165 +1,75 @@
 import json
 from backend.agents.llm_client import call_llm
 
-def student_profiler_agent(raw_idea: str) -> dict:
-    """Analyzes raw idea and selected level to generate tailored questions."""
-    prompt = f"""You are an Expert AI Student Profiler.
-Input from student: "{raw_idea}"
+def student_profiler_agent(raw_idea: str, user_level: str) -> dict:
+    prompt = f"""You are an AI Student Profiler Agent.
+Student Level: {user_level}
+Idea: "{raw_idea}"
 
 Task:
-1. Determine or reflect the user level into: "Beginner", "Intermediate", or "Advanced".
-2. Generate targeted questions matching the competence level:
-   - If Beginner: Ask 4 simple questions covering (1. Core Idea clarity, 2. Problem Statement, 3. Expected Outcome, 4. Preferred Duration in months).
-   - If Intermediate: Ask 5 practical questions covering (1. Detailed Idea, 2. Preferred Technologies/Languages, 3. Expected Outcome, 4. Preferred Duration, 5. Scope boundaries/Limits).
-   - If Advanced: Ask 5 deep questions covering (1. System Architecture & Model Pipeline, 2. Production Technologies, 3. Sub-domain specialization, 4. Expected Outcome/Metrics, 5. Timeline Duration).
-3. Suggest a formal Academic Project Name and Domain.
+1. Generate 4 clear questions matching {user_level} skill level:
+   - Beginner: (Idea clarity, Simple problem statement, Expected final result, Preferred duration in months).
+   - Intermediate: (Specific target tools, Problem nuance, MVP core features, Scope boundaries).
+   - Advanced: (System architecture, Model selection, Latency targets, Real-time ingestion).
+2. Suggest a formal Project Title and Domain.
 
-Return strictly valid JSON with this exact schema (no markdown fences, no extra text):
+Return strictly valid JSON with this exact schema:
 {{
-  "level": "Beginner | Intermediate | Advanced",
-  "suggested_name": "Formal Project Name",
+  "level": "{user_level}",
+  "suggested_name": "Project Name",
   "suggested_domain": "Domain Name",
-  "questions": [
-    "Question 1",
-    "Question 2",
-    "Question 3",
-    "Question 4"
-  ]
+  "questions": ["Question 1", "Question 2", "Question 3", "Question 4"]
 }}"""
-    raw_res = call_llm(prompt, system_prompt="You are a strict JSON generator. Return only raw valid JSON.", max_tokens=1000)
+    raw_res = call_llm(prompt, system_prompt="You are a strict JSON generator. Return only raw valid JSON.", max_tokens=1500)
     cleaned = raw_res.replace("```json", "").replace("```", "").strip()
     return json.loads(cleaned)
 
-def idea_agent(project) -> str:
-    prompt = f"""You are an AI Project Idea Agent.
-Analyze this student project:
-Project Name:
-{project.name}
-Problem:
-{project.problem_statement}
-Domain:
-{project.domain}
+def master_council_agent(project) -> dict:
+    """Executes a unified agent pipeline to prevent 429 quota exhaustion and output truncation."""
+    prompt = f"""You are the Master AI Project Council.
+Generate an exhaustive, in-depth academic engineering blueprint.
 
-Tell me:
-1. Is this a good academic project?
-2. What problem does it solve?
-3. Who will use it?
-4. What can make the project innovative?
-
-Keep the explanation simple."""
-    return call_llm(prompt, system_prompt="You are an Academic Project Idea Evaluator. Keep explanations simple.")
-
-def scope_agent(project) -> str:
-    prompt = f"""You are an AI Project Scope Agent.
-Project:
-{project.name}
-Problem:
-{project.problem_statement}
-
-Define:
-1. Project objective
-2. 5 important features
-3. Project scope
-4. What should not be included (Non-goals)
-5. Expected output
-
-Use simple language."""
-    return call_llm(prompt, system_prompt="You are an Academic Scope Specialist.")
-
-def technology_agent(project) -> str:
-    prompt = f"""You are a Technology Selection Agent.
-Student Project:
-{project.name}
-Domain:
-{project.domain}
-Current technologies:
-{project.preferred_tech}
-
-Recommend suitable technologies for this project.
-Include:
-1. Programming language
-2. AI/ML technology
-3. Database
-4. Backend
-5. Frontend
-6. Deployment platform
-
-For every technology, explain WHY it is useful.
-Keep it beginner friendly."""
-    return call_llm(prompt, system_prompt="You are a Senior Technology Advisor.")
-
-def mermaid_architecture_agent(project) -> str:
-    prompt = f"""Generate a clean Mermaid.js flowchart (graph TD) for the architecture of:
-Project: {project.name}
+Project Name: {project.name}
 Domain: {project.domain}
-Tech Stack: {project.preferred_tech}
+Duration: {project.duration_months} Months
+Technologies: {project.preferred_tech}
+Problem Statement: {project.problem_statement}
 
-Include: Client UI -> API Backend -> Core Engine / ML -> Database.
-Output ONLY the raw Mermaid code block."""
-    return call_llm(prompt, system_prompt="You generate valid Mermaid.js diagrams only.")
+You must return strictly valid JSON matching this schema:
+{{
+  "idea_evaluation": "Full evaluation: 1. Academic Feasibility, 2. Core Problem Solved, 3. Target Audience, 4. Innovation Factors.",
+  "scope_definition": "1. Objectives, 2. Top 5 MVP Features, 3. Scope Boundaries, 4. Explicit Non-Goals, 5. Deliverables.",
+  "technology_stack": "Detailed recommendations with justifications for Language, AI/ML Framework, Database, Backend, Frontend, and Free Deployment.",
+  "architecture_diagram": "graph TD\\n  A[Client UI] --> B[FastAPI Gateway]\\n  B --> C[ML/Agent Pipeline]\\n  B --> D[(MongoDB Atlas)]",
+  "timeline_milestones": "Month-by-Month breakdown over {project.duration_months} months with Tasks, Deadlines, and Deliverables.",
+  "risk_assessment": "Top 3 Technical Risks (Compute, Data, API limits) and Mitigation Strategies.",
+  "documentation_plan": "14-Section thesis outline from Abstract to References with complete paragraph summaries for each.",
+  "code_starter_pack": "# Starter backend snippet for FastAPI & Streamlit connection",
+  "cost_estimation": "Free tier breakdown (Hugging Face Spaces, MongoDB Atlas M0, Render Free, Streamlit Community Cloud) vs production cost."
+}}"""
+    raw_res = call_llm(prompt, system_prompt="You are a senior academic architect. Return only pure JSON without markdown codeblock wrappers.", max_tokens=8192)
+    cleaned = raw_res.replace("```json", "").replace("```", "").strip()
+    return json.loads(cleaned)
 
-def planning_agent(project) -> str:
-    prompt = f"""You are an Academic Project Planning Agent.
-Project:
-{project.name}
-Duration:
-{project.duration_months} Months
+def interactive_mentor_agent(project_name: str, context: str, query: str) -> str:
+    prompt = f"""You are the Lead Project Advisor for '{project_name}'.
+Blueprint Context:
+{context}
 
-Create a project roadmap.
-Divide the project into monthly milestones across {project.duration_months} months.
-For each month provide:
-- Month Number
-- Task
-- Expected output
+Student Question:
+{query}
 
-Also include testing and final documentation deadlines."""
-    return call_llm(prompt, system_prompt="You are an Agile Academic Project Manager.")
-
-def risk_agent(project) -> str:
-    prompt = f"""You are a Project Risk Management Agent.
-Project:
-{project.name}
-Domain:
-{project.domain}
-
-List:
-1. Top 3 Technical Failure Points (e.g., rate limits, compute constraints, lack of dataset)
-2. Simple Fallbacks & Mitigation Steps for each."""
-    return call_llm(prompt, system_prompt="You are a Technical Risk Analyst.")
-
-def documentation_agent(project) -> str:
-    prompt = f"""You are a Project Documentation Agent.
-Project:
-{project.name}
-
-Create a Documentation structure.
-Include:
-1. Abstract
-2. Introduction
-3. Problem Statement
-4. Objectives
-5. Literature Review
-6. Methodology
-7. System Architecture
-8. Technologies
-9. Implementation
-10. Testing
-11. Results
-12. Future Scope
-13. Conclusion
-14. References
-
-Explain briefly what should be written in each section."""
-    return call_llm(prompt, system_prompt="You are an Academic Documentation Specialist.")
+Provide a direct, practical, and encouraging engineering answer."""
+    return call_llm(prompt, system_prompt="You are an expert, friendly AI thesis mentor.", max_tokens=1500)
 
 def progress_tracking_agent(project_name: str, week: int, completed: str, blockers: str) -> str:
-    prompt = f"""Analyze this student's weekly project status:
+    prompt = f"""Analyze student progress:
 Project: {project_name} | Week: {week}
-Completed Work: {completed}
-Current Blockers: {blockers}
+Completed: {completed}
+Blockers: {blockers}
 
-Provide:
+Return:
 1. Health Status: [ON TRACK] or [AT RISK]
-2. Step-by-Step Action Plan to resolve blockers
-3. Target tasks for Next Week"""
-    return call_llm(prompt, system_prompt="You are a Supportive Academic Mentor.")
+2. Actionable fixes for blockers
+3. Sprints for next week"""
+    return call_llm(prompt, system_prompt="You are an Agile Academic Mentor.", max_tokens=1500)
