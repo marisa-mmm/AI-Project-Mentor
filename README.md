@@ -127,7 +127,6 @@ Everything a student needs to take a project from concept to final submission:
 * 📋 **Interactive Kanban Board**: Move milestone cards between **To Do**, **In Progress**, and **Done** to keep your team organized.
 * 💬 **AI Viva Preparation Chat**: A 24/7 AI mock examiner that knows your project's code and tech stack. Ask it to quiz you or explain tricky concepts.
 * 📈 **Live Progress Slider**: Update your completion percentage anytime to let your guide know where you stand.
-* ⏱️ **Bi-Weekly Hours & Blocker Log**: Log hours worked each fortnight, list tasks finished, and report any technical blockers to get help from your mentor.
 * 📄 **14-Chapter Thesis Generator**: Automatically turns your project architecture and progress into a formal university manuscript. Download it with one click as **PDF** or **Word (`.docx`)** ready for black-book binding!
 
 ---
@@ -138,7 +137,6 @@ A complete control center for project guides, department heads, and external exa
 
 * 🏛️ **Project Approval Hub**: Read submitted blueprints, check student tech stacks, and grant formal verdicts (**Approved**, **Needs Revision**, or **Rejected**).
 * 👥 **My Mentees Dashboard**: View all students assigned to you, check how many hours they spent, and verify their bi-weekly sprint submissions.
-* 🏢 **Department Roster**: A master list of all college final-year projects, showing team members, assigned guides, and current review status.
 * 📢 **Department Noticeboard**: Post announcements about submission deadlines, format guidelines, or viva schedules that appear instantly on student dashboards.
 * ⚖️ **Standard 50-Mark Viva Scorecard**: Grade students during their live presentation using an easy point-and-click digital rubric.
 
