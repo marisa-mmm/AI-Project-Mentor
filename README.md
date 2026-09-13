@@ -135,7 +135,8 @@ Everything a student needs to take a project from concept to final submission:
 A complete control center for project guides, department heads, and external examiners:
 
 * 🏛️ **Project Approval Hub**: Read submitted blueprints, check student tech stacks, and grant formal verdicts (**Approved**, **Needs Revision**, or **Rejected**).
-* 📊 **Batch Submissions Overview**: Monitor student project submissions, architecture designs, and live development phases.
+* 👥 **My Mentees Dashboard**: View all students assigned to you, check how many hours they spent, and verify their bi-weekly sprint submissions.
+* 🏢 **Department Roster**: A master list of all college final-year projects, showing team members, assigned guides, and current review status.
 * 📢 **Department Noticeboard**: Post announcements about submission deadlines, format guidelines, or viva schedules that appear instantly on student dashboards.
 * ⚖️ **Standard 50-Mark Viva Scorecard**: Grade students during their live presentation using an easy point-and-click digital rubric.
 
