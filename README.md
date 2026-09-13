@@ -1,323 +1,286 @@
 # 🎓 AI Project Mentor
 
-### 🚀 From Project Idea to Final Viva Defense: Institutional Capstone Management & AI Evaluation Suite
+### 🚀 From Project Idea to Final Viva Defense
 
 <div align="center">
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
-[![React 18](https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
+[![React](https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
 [![Vite](https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![MongoDB Atlas](https://img.shields.io/badge/MongoDB_Atlas-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
-[![Groq Cloud](https://img.shields.io/badge/Groq_Llama_3.3_70B-F55036?style=for-the-badge&logo=groq&logoColor=white)](https://groq.com)
+[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
 [![Python 3.10+](https://img.shields.io/badge/Python_3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
+[![MongoDB Atlas](https://img.shields.io/badge/MongoDB_Atlas-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/atlas)
+[![Groq Cloud](https://img.shields.io/badge/Groq_Llama_3.3-F55036?style=for-the-badge&logo=groq&logoColor=white)](https://groq.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  <b>An enterprise-grade academic lifecycle platform engineered for university engineering departments.</b><br/>
-  Bridging student architectural planning, bi-weekly progress accountability, and automated manuscript generation with faculty supervisory oversight, audit compliance, and standardized 50-mark viva defense rubrics.
+  <b>A smart, all-in-one web platform designed for college engineering departments.</b><br/>
+  Helps students plan, build, track, and document their final-year projects, while giving professors an easy way to guide teams, check weekly progress, and grade final viva defenses fairly.
 </p>
 
-[✨ Key Innovations](#-key-platform-innovations) •
-[🏛️ Architecture Flow](#-dual-portal-lifecycle-architecture) •
-[🤖 Multi-Agent Council](#-multi-agent-orchestration-engine) •
-[👨‍🎓 Student Portal](#-student-engineering-platform) •
-[👩‍🏫 Faculty Portal](#-faculty-evaluation--supervision-portal) •
+[💡 Why This Platform?](#-why-ai-project-mentor) •
+[🔄 How It Works](#-how-it-works-step-by-step) •
+[🤖 The 4 AI Agents](#-the-4-ai-planning-agents) •
+[✨ Student Features](#-student-platform-features) •
+[👩‍🏫 Faculty Features](#-faculty-portal-features) •
 [⚖️ Viva Rubric](#-standardized-50-mark-viva-defense-rubric) •
-[🚀 Installation](#-getting-started--installation)
+[🚀 Quick Start Guide](#-quick-start-guide)
 
 </div>
 
 ---
 
-## 📌 Executive Summary & Problem Statement
+## 💡 Why AI Project Mentor?
 
-In conventional academic environments, undergraduate and graduate engineering capstones suffer from structural inefficiencies:
-* **Scope Creep & Architectural Debt**: Students select overambitious or underspecified project ideas without rigorous feasibility analysis or milestone forecasting.
-* **Fragmented Supervision**: Faculty mentors lack unified visibility into weekly development hours, sprint blockers, and student accountability.
-* **Late-Stage Manuscript Panic**: Formatting a comprehensive 14-section thesis compliant with university black-book guidelines is often delayed until days before the final defense.
-* **Subjective Viva Scoring**: External examinations frequently lack standardized, accreditation-aligned (NBA/ABET) digital rubrics.
+Final year engineering projects are a major milestone for every engineering student, but both students and teachers face common problems:
 
-**AI Project Mentor** resolves these challenges by institutionalizing the entire project lifecycle—from raw concept inception to final external viva defense—in a single secure, role-governed platform.
+| ❌ The Old Way (Common Problems) | ✅ With AI Project Mentor (The Solution) |
+|---|---|
+| **Confusing Project Scope**: Students pick huge ideas and get stuck halfway through. | 🤖 **AI Architecture Wizard**: Breaks your raw idea into realistic goals, features, and tech stacks. |
+| **No Regular Tracking**: Teachers have no idea what students did until the last week. | ⏱️ **Bi-Weekly Progress Logs**: Students log hours and weekly tasks; guides review and approve them online. |
+| **Viva Exam Fear**: Students don't know what tough questions the external examiner will ask. | 💬 **AI Viva Preparation Chat**: Practice with an AI examiner trained on your exact project stack. |
+| **Thesis Formatting Panic**: Students spend weeks fighting Word margins and formatting rules. | 📄 **1-Click 14-Chapter Thesis**: Generates complete academic reports ready for printing in PDF and Word (`.docx`). |
+| **Unfair or Inconsistent Grading**: Different teachers give marks differently on paper. | ⚖️ **Standard 50-Mark Rubric**: Clear digital scorecard covering Architecture, Code Demo, Report, and Viva Q&A. |
 
 ---
 
-## 🏛️ Dual-Portal Lifecycle Architecture
+## 🔄 How It Works (Step-by-Step)
 
 ```mermaid
 graph TD
-    classDef student fill:#eff6ff,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
-    classDef faculty fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d;
-    classDef ai fill:#faf5ff,stroke:#9333ea,stroke-width:2px,color:#581c87;
-    classDef doc fill:#fffbeb,stroke:#d97706,stroke-width:2px,color:#78350f;
+    classDef student fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a;
+    classDef faculty fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+    classDef ai fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,color:#581c87;
+    classDef doc fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f;
 
-    subgraph Phase1["Phase 1: Inception & Architectural Blueprint"]
-        A["💡 Student Project Idea"]:::student --> B["🤖 4-Agent Planning Council"]:::ai
-        B --> C["📋 Academic System Blueprint"]:::student
-        C --> D["👩‍🏫 Faculty Supervisor Review"]:::faculty
-        D -->|Revisions Requested| B
-        D -->|Approved Verdict| E["🚀 Project Claimed & Initialized"]:::faculty
+    subgraph Step1["1. Project Inception & Planning"]
+        A["💡 Student enters project idea & skill level"]:::student --> B["🤖 4 AI Agents create complete Blueprint"]:::ai
+        B --> C["👩‍🏫 Faculty Guide reviews and approves blueprint"]:::faculty
     end
 
-    subgraph Phase2["Phase 2: Sprint Execution & Mentorship"]
-        E --> F["📌 Interactive Kanban Sprint Board"]:::student
-        F --> G["⏱️ Bi-Weekly Sprint & Hours Log"]:::student
-        G --> H["🔍 Faculty Log Verification & Guidance"]:::faculty
-        F --> I["💬 AI Viva Examiner Preparation Chat"]:::ai
+    subgraph Step2["2. Building & Weekly Progress"]
+        C --> D["📋 Student tracks tasks on Kanban Board"]:::student
+        D --> E["⏱️ Student logs bi-weekly hours & blockers"]:::student
+        E --> F["✅ Guide reviews & verifies sprint progress"]:::faculty
+        D --> G["💬 Student prepares with AI Viva Chatbot"]:::ai
     end
 
-    subgraph Phase3["Phase 3: Thesis & Final Viva Defense"]
-        I --> J["📑 14-Section Academic Thesis Generator"]:::doc
-        J --> K["📄 Automated PDF & Word Export"]:::doc
-        K --> L["⚖️ 50-Mark Standardized Viva Examination"]:::faculty
-        L --> M["🏆 Official Departmental Archive & Verdict"]:::faculty
+    subgraph Step3["3. Thesis & Final Examination"]
+        G --> H["📑 Export complete 14-Chapter Thesis PDF & Word"]:::doc
+        H --> I["⚖️ Faculty grades defense with 50-Mark Viva Scorecard"]:::faculty
+        I --> J["🏆 Final marks and verdict recorded in system"]:::faculty
     end
 ```
 
 ---
 
-## 🤖 Multi-Agent Orchestration Engine
+## 🤖 The 4 AI Planning Agents
 
-Rather than relying on generic single-prompt chatbots, the platform orchestrates a **Council of 4 Autonomous Agents** powered by ultra-low-latency Groq Cloud hardware running `llama-3.3-70b-versatile` and `llama-3.1-8b-instant`:
+When a student submits an idea, our system does not just call a generic chatbot. It runs a team of **4 specialized AI agents** powered by ultra-fast Groq LLMs (`llama-3.3-70b-versatile`):
 
 ```mermaid
 flowchart LR
-    classDef agent fill:#f8fafc,stroke:#3b82f6,stroke-width:2px,color:#0f172a;
-    classDef core fill:#eff6ff,stroke:#1d4ed8,stroke-width:3px,color:#1e3a8a;
+    classDef input fill:#f1f5f9,stroke:#64748b,stroke-width:2px,color:#0f172a;
+    classDef agent fill:#eff6ff,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a;
+    classDef out fill:#f0fdf4,stroke:#22c55e,stroke-width:2px,color:#14532d;
 
-    Input["💡 Project Concept & Student Skillset"] --> Core["🧠 Groq Multi-Agent Pipeline<br/>(Llama 3.3 70B & 3.1 8B)"]:::core
+    In["💡 Your Raw Project Idea"]:::input --> Engine["🧠 Groq Multi-Agent Engine"]:::agent
     
-    Core --> Ag1["🎯 Agent 1: Scope & Problem<br/>Objectives, Limitations & Boundaries"]:::agent
-    Core --> Ag2["⚙️ Agent 2: Tech Stack Architect<br/>Frameworks, DB & Tradeoff Matrix"]:::agent
-    Core --> Ag3["📅 Agent 3: Timeline & Sprints<br/>Work Breakdown & Gantt Milestones"]:::agent
-    Core --> Ag4["🛡️ Agent 4: Viva & Risk Auditor<br/>Common Pitfalls & Examiner Traps"]:::agent
+    Engine --> A1["🎯 1. Scope Agent<br/>Defines goals, user roles & boundaries"]:::agent
+    Engine --> A2["⚙️ 2. Tech Stack Agent<br/>Recommends database, frontend & backend"]:::agent
+    Engine --> A3["📅 3. Timeline Agent<br/>Breaks project into 4 semester phases"]:::agent
+    Engine --> A4["🛡️ 4. Risk & Viva Agent<br/>Identifies weak points & examiner traps"]:::agent
 
-    Ag1 & Ag2 & Ag3 & Ag4 --> Output["📑 Production Blueprint & 14-Section Manuscript"]:::core
+    A1 & A2 & A3 & A4 --> Out["📋 Complete Project Blueprint"]:::out
 ```
 
-1. **🎯 Problem & Scope Agent**: Formulates formal academic problem definitions, project constraints, user personas, and explicit system boundaries.
-2. **⚙️ Architecture & Tech Stack Agent**: Evaluates frontend, backend, database, and DevOps candidates, generating justifiable architectural tradeoffs tailored to candidate experience.
-3. **📅 Timeline & Milestone Agent**: Deconstructs semester deliverables into a Gantt-ready chronological sprint schedule categorized across 4 delivery phases.
-4. **🛡️ Viva Defense & Risk Agent**: Employs an adversarial persona to predict the 2 most vulnerable technical failure points and simulate probing external examiner questions.
+1. **🎯 Scope & Problem Agent**: Clearly explains the problem, who will use the app, and what features are included or excluded (prevents taking on too much work).
+2. **⚙️ Tech Stack Architect**: Recommends the best frontend, backend, database, and libraries based on student skill level, explaining why each tool is chosen.
+3. **📅 Timeline & Milestone Agent**: Creates a realistic 4-phase semester roadmap with weekly goals.
+4. **🛡️ Viva Defense & Risk Auditor**: Predicts the hardest questions external examiners will ask and warns about common architectural mistakes before coding starts.
 
 ---
 
-## ✨ Key Platform Innovations
+## ✨ Student Platform Features
 
-| Innovation | Traditional University System | AI Project Mentor Platform |
-|---|---|---|
-| **Architecture Planning** | Ad-hoc Googling & unverified blogs | 4-Agent structured academic blueprints with tradeoff analysis |
-| **Progress Accountability** | Periodic verbal updates or unread emails | Bi-weekly logged hours, blocker submissions & mentor sign-off |
-| **Viva Exam Preparation** | Self-study without examiner simulation | Real-time AI Examiner Chatbot trained on the project's exact stack |
-| **Thesis Documentation** | Weeks of manual Word formatting errors | Instant 14-section thesis generation in bound PDF & Word (.docx) |
-| **Defense Evaluation** | Subjective paper notes and inconsistent marks | Standardized 50-mark digital scorecard with committee verdict |
-| **Fault-Tolerant AI** | Brittle single-model dependency | Automatic multi-model fallback chain skipping decommissioned APIs |
+Everything a student needs to take a project from concept to final submission:
 
----
-
-## 👨‍🎓 Student Engineering Platform
-
-The student portal provides an integrated workstation supporting the entire engineering journey:
-
-* 🤖 **Multi-Agent Architecture Wizard**: Formulates academic problem statements, dynamic scope, recommended tech stacks, and timelines based on candidate skill level.
-* 📋 **Interactive Kanban & Roadmap**: Converts multi-agent implementation milestones into manageable development sprints (*To Do*, *In Progress*, *Done*).
-* 💬 **AI Mentor Viva Preparation**: Real-time context-aware chat assistant trained on the project's exact stack to simulate tough external examiner viva questions.
-* 📈 **Milestone Progress Updates**: Visual completion slider and phase selectors to report live status back to academic supervisors.
-* ⏱️ **Bi-Weekly Sprint Logging**: Direct submission of logged hours, weekly accomplishments, and technical blockers for supervisor sign-off.
-* 📄 **14-Section Thesis Generator**: Formats complete academic manuscripts ready for black-book binding, complete with one-click PDF and Word (`.docx`) export.
+* 🤖 **AI Architecture Wizard**: Fill in your title, domain, and a short idea. Get back a full architecture blueprint in seconds.
+* 📋 **Interactive Kanban Board**: Move milestone cards between **To Do**, **In Progress**, and **Done** to keep your team organized.
+* 💬 **AI Viva Preparation Chat**: A 24/7 AI mock examiner that knows your project's code and tech stack. Ask it to quiz you or explain tricky concepts.
+* 📈 **Live Progress Slider**: Update your completion percentage anytime to let your guide know where you stand.
+* ⏱️ **Bi-Weekly Hours & Blocker Log**: Log hours worked each fortnight, list tasks finished, and report any technical blockers to get help from your mentor.
+* 📄 **14-Chapter Thesis Generator**: Automatically turns your project architecture and progress into a formal university manuscript. Download it with one click as **PDF** or **Word (`.docx`)** ready for black-book binding!
 
 ---
 
-## 👩‍🏫 Faculty Evaluation & Supervision Portal
+## 👩‍🏫 Faculty Portal Features
 
-The faculty portal equips professors, project guides, and external examiners with full departmental governance:
+A complete control center for project guides, department heads, and external examiners:
 
-* 🏛️ **Centralized Evaluation Hub**: Review pending project blueprints, examine system architectures, and issue formal verdicts (*Approved*, *Needs Revision*, *Rejected*).
-* 👥 **Supervisor Allocation Roster**: Institutional registry to claim projects, track mentee count, and supervise progress across academic divisions.
-* 📊 **Batch Progress Tracker**: Live dashboard monitoring student phase completions, sprint blockers, and bi-weekly milestone submissions.
-* 🔍 **Manuscript Compliance Verifier**: Automated structural consistency and originality audit for submitted thesis reports.
-* 📢 **Department Noticeboard**: Broadcast official deadlines, viva schedules, and submission criteria directly to student dashboards.
-* ⚖️ **Viva & Defense Rubric Scorecard**: Standardized 50-mark digital evaluation sheet assessing System Architecture (10), Code Execution (20), Presentation (10), and Viva Defense (10).
+* 🏛️ **Project Approval Hub**: Read submitted blueprints, check student tech stacks, and grant formal verdicts (**Approved**, **Needs Revision**, or **Rejected**).
+* 👥 **My Mentees Dashboard**: View all students assigned to you, check how many hours they spent, and verify their bi-weekly sprint submissions.
+* 🏢 **Department Roster**: A master list of all college final-year projects, showing team members, assigned guides, and current review status.
+* 📢 **Department Noticeboard**: Post announcements about submission deadlines, format guidelines, or viva schedules that appear instantly on student dashboards.
+* ⚖️ **Standard 50-Mark Viva Scorecard**: Grade students during their live presentation using an easy point-and-click digital rubric.
 
 ---
 
 ## ⚖️ Standardized 50-Mark Viva Defense Rubric
 
-Aligned with international engineering accreditation standards (NBA Tier-I & ABET Criterion 3 & 5), the platform digitizes the final oral examination:
+The platform replaces subjective paper notes with an official, standardized 50-mark digital scorecard:
 
-| Criteria | Max Marks | Evaluated Competencies & Rubric Breakdown |
+| Category | Max Marks | What the Examiners Check |
 |---|:---:|---|
-| **1. System Architecture & Engineering** | **10** | Modularity, architectural diagram clarity, database normalization, API schema hygiene, and requirement fulfillment. |
-| **2. Code Execution & Functional Delivery** | **20** | Live running demonstration, error resilience, test suite coverage, Git workflow, code cleanliness, and deployment viability. |
-| **3. Presentation & Manuscript Quality** | **10** | Adherence to standard university 14-section thesis format, citation rigor, visual figure quality, and black-book readiness. |
-| **4. Defense Mastery & Viva Q&A** | **10** | Student mastery, rationale behind architectural decisions, domain depth, understanding of edge cases, and future enhancements. |
-| **Total Evaluation** | **50** | **Institutional Verdict**: *Distinction (40-50)* • *Satisfactory (25-39)* • *Re-examination Required (<25)* |
+| **1. System Architecture & Engineering** | **10** | Is the system modular? Is the database well designed? Are the APIs clean? |
+| **2. Code Execution & Working Demo** | **20** | Does the live demo actually work? Is error handling clean? Is the code well written? |
+| **3. Presentation & Thesis Quality** | **10** | Is the 14-chapter report complete? Are diagrams neat? Are references properly cited? |
+| **4. Viva Defense & Q&A Mastery** | **10** | Can the student defend their design choices? Do they understand edge cases? |
+| **Total Marks** | **50** | **Final Verdict**: *Distinction (40-50)* • *Satisfactory (25-39)* • *Re-exam (<25)* |
 
 ---
 
-## 📑 14-Section University Thesis Structure
+## 📑 14-Chapter University Thesis Structure
 
-The built-in document engine automatically structures, formats, and exports complete manuscripts compliant with university black-book regulations:
+The built-in thesis export automatically formats all 14 standard university chapters:
 
 ```
 ├── CHAPTER 1: TITLE & EXECUTIVE ABSTRACT
 ├── CHAPTER 2: INTRODUCTION & PROBLEM BACKGROUND
 ├── CHAPTER 3: PROBLEM FORMULATION & MOTIVATION
 ├── CHAPTER 4: LITERATURE SURVEY & STATE OF THE ART
-├── CHAPTER 5: PROPOSED SYSTEM ARCHITECTURE & BLOCK DIAGRAM
+├── CHAPTER 5: PROPOSED SYSTEM ARCHITECTURE & DIAGRAMS
 ├── CHAPTER 6: FUNCTIONAL & NON-FUNCTIONAL REQUIREMENTS
-├── CHAPTER 7: TECHNOLOGY STACK SELECTION & TRADEOFF ANALYSIS
-├── CHAPTER 8: DATABASE SCHEMA & DATA FLOW MODELING
-├── CHAPTER 9: SYSTEM IMPLEMENTATION & CORE MODULES
+├── CHAPTER 7: TECHNOLOGY STACK SELECTION & TRADEOFFS
+├── CHAPTER 8: DATABASE SCHEMA & DATA FLOW DESIGN
+├── CHAPTER 9: SYSTEM IMPLEMENTATION & KEY MODULES
 ├── CHAPTER 10: TESTING METHODOLOGY & TEST CASES
-├── CHAPTER 11: RESULTS & EXPERIMENTAL PERFORMANCE ANALYSIS
-├── CHAPTER 12: SECURITY, PRIVACY & PRODUCTION COMPLIANCE
-├── CHAPTER 13: LIMITATIONS & FUTURE RESEARCH DIRECTIONS
-└── CHAPTER 14: REFERENCES & IEEE BIBLIOGRAPHIC CITATIONS
+├── CHAPTER 11: RESULTS & EXPERIMENTAL ANALYSIS
+├── CHAPTER 12: SECURITY, PRIVACY & PRODUCTION READINESS
+├── CHAPTER 13: LIMITATIONS & FUTURE SCOPE
+└── CHAPTER 14: REFERENCES & IEEE CITATIONS
 ```
 
 ---
 
-## 🛠️ Technology Stack & Architectural Roles
+## 🛠️ Tech Stack & Tools Used
 
-```
-                      ┌─────────────────────────────────────────┐
-                      │          React 18 + Vite Frontend       │
-                      │  Tailwind CSS • Lucide Icons • Axios    │
-                      └────────────────────┬────────────────────┘
-                                           │ HTTP / JSON API
-                                           ▼
-                      ┌─────────────────────────────────────────┐
-                      │          FastAPI Backend Server         │
-                      │     Uvicorn • Pydantic v2 • CORS        │
-                      └──────┬───────────────────────────┬──────┘
-                             │                           │
-                             ▼                           ▼
-              ┌───────────────────────────┐ ┌───────────────────────────┐
-              │     MongoDB Atlas TLS     │ │      Groq Cloud LLM       │
-              │  Blueprints • Users •     │ │  Llama 3.3 70B Versatile  │
-              │  Viva Scores • Logs       │ │  Llama 3.1 8B Instant     │
-              └───────────────────────────┘ └───────────────────────────┘
-```
-
-| Component | Technology | Version | Purpose in Platform |
-|---|---|---|---|
-| **Frontend Framework** | React.js | `^18.2.0` | High-performance component-driven user interface |
-| **Build Tool** | Vite | `^6.4.3` | Hot Module Replacement (HMR) and optimized rollup bundle |
-| **Styling & Icons** | Tailwind CSS + Lucide | `^3.4.1` / `^0.344.0` | Academic slate/royal blue theme, zero emoji UI components |
-| **Backend API** | FastAPI | `^0.110.0` | Asynchronous RESTful microservice with OpenAPI auto-docs |
-| **Server Engine** | Uvicorn | `^0.28.0` | Lightning-fast ASGI production web server |
-| **Data Validation** | Pydantic v2 | `^2.6.0` | Strict type validation and JSON serialization |
-| **Database** | MongoDB Atlas | `^4.6.0` | Document datastore for blueprints, rosters, logs, and scorecards |
-| **AI Inference** | Groq Cloud API | `^0.5.0` | Sub-second Llama 3.3 70B and 3.1 8B multi-agent orchestration |
-| **PDF Generation** | ReportLab | `^4.1.0` | Programmatic thesis cover pages, headers, footers & typography |
-| **Word Export** | python-docx | `^1.1.0` | Native Microsoft Word (`.docx`) manuscript synthesis |
+| Layer | Technology | Why We Use It |
+|---|---|---|
+| 💻 **Frontend** | **React 18 + Vite** | Blazing fast user interface with instant page loads. |
+| 🎨 **Styling** | **Tailwind CSS** | Clean, modern university blue-and-white theme. |
+| 🔣 **Icons** | **Lucide React** | Crisp, professional SVG icons across all dashboards. |
+| ⚡ **Backend** | **FastAPI (Python 3.10+)** | High-speed asynchronous REST API with automatic documentation. |
+| 🗄️ **Database** | **MongoDB Atlas** | Secure cloud database storing users, blueprints, logs, and marks. |
+| 🧠 **AI Engine** | **Groq Cloud API** | Ultra-low latency inference using Llama 3.3 70B and Llama 3.1 8B. |
+| 📑 **PDF Export** | **ReportLab** | Generates clean, bound academic PDF thesis documents. |
+| 📝 **Word Export** | **python-docx** | Produces editable `.docx` manuscripts for final edits. |
 
 ---
 
-## 📂 Repository Layout
+## 📂 Project Structure
 
 ```plaintext
 AI-Project-Mentor/
 ├── backend/
-│   ├── main.py              # FastAPI endpoints, multi-agent pipelines & auth
-│   ├── database.py          # MongoDB Atlas TLS connection & collection indexes
-│   ├── models.py            # Pydantic data schemas & request validators
-│   ├── agents/              # Council agent prompt templates and logic
-│   └── requirements.txt     # Backend Python dependencies
+│   ├── main.py              # FastAPI endpoints, multi-agent logic & auth
+│   ├── database.py          # MongoDB Atlas connection & database queries
+│   ├── models.py            # Pydantic models & data validation
+│   ├── agents/              # Council agent prompt templates
+│   └── requirements.txt     # Python backend dependencies
 │
 ├── frontend-react/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Sidebar.jsx                   # University navigation & role menu
-│   │   │   └── CustomSelect.jsx              # Accessible styled dropdown selector
+│   │   │   └── CustomSelect.jsx              # Clean styled dropdown selector
 │   │   ├── pages/
 │   │   │   ├── LandingPage.jsx               # Public university portal landing page
-│   │   │   ├── AuthPage.jsx                  # Role-guarded sign-in & registration
+│   │   │   ├── AuthPage.jsx                  # Sign in & registration with role guard
 │   │   │   ├── DashboardPage.jsx             # Student project hub & progress stats
-│   │   │   ├── FacultyDashboardPage.jsx      # Supervised mentees & department roster
+│   │   │   ├── FacultyDashboardPage.jsx      # Mentees tracking & department roster
 │   │   │   ├── WorkspacePage.jsx             # 4-Agent blueprint generation wizard
-│   │   │   ├── BenchmarksPage.jsx            # Explore projects & viva rubrics modal
+│   │   │   ├── BenchmarksPage.jsx            # Explore past projects & viva scores
 │   │   │   ├── VivaGradingPage.jsx           # Committee 50-mark viva grading portal
-│   │   │   ├── NoticeboardPage.jsx           # Cohort institutional announcements
+│   │   │   ├── NoticeboardPage.jsx           # Institutional cohort announcements
 │   │   │   ├── StudentProgressUpdatePage.jsx # Student progress & completion sliders
 │   │   │   ├── BatchProgressTrackerPage.jsx  # Faculty batch progress matrix
-│   │   │   ├── SettingsPage.jsx              # Institutional profile & security
+│   │   │   ├── SettingsPage.jsx              # Institutional profile & password update
 │   │   │   ├── ChatMentorPage.jsx            # AI mentor external examiner chat
 │   │   │   ├── KanbanPage.jsx                # Sprint roadmap milestone board
-│   │   │   ├── ThesisDocPage.jsx             # 14-chapter thesis compiler & export
-│   │   │   └── ProjectHistoryPage.jsx        # Project revision archive
-│   │   ├── App.jsx                           # Viewport route controller & role guards
-│   │   ├── index.css                         # Enterprise academic design tokens
-│   │   └── main.jsx                          # React application entrypoint
-│   ├── tailwind.config.js                   # University white & royal blue theme setup
+│   │   │   └── ThesisDocPage.jsx             # 14-chapter thesis compiler & export
+│   │   ├── App.jsx                           # Route controller & screen layout
+│   │   ├── index.css                         # Custom styling tokens
+│   │   └── main.jsx                          # React application entry point
 │   ├── vite.config.js                       # Port 5174 development server config
 │   └── package.json                         # Node.js dependencies
 │
-├── AI_Project_Mentor.ipynb                  # Exploratory agent validation notebook
 ├── requirements.txt                         # Root Python backend dependencies
-├── .env.example                             # Environment variable template
+├── .env                                     # Environment variables (API keys)
 ├── LICENSE                                  # MIT Open-Source License
-└── README.md                                # Comprehensive repository documentation
+└── README.md                                # Project documentation
 ```
 
 ---
 
 ## 🔌 API Endpoints Reference
 
-| Method | Route | Access | Functional Description |
+All backend routes are documented with interactive Swagger docs at `http://127.0.0.1:8000/docs`:
+
+| Method | Route | Who Uses It | What It Does |
 |:---:|---|:---:|---|
-| `POST` | `/api/auth/register` | Public | Register student or faculty member with hashed credentials |
-| `POST` | `/api/auth/login` | Public | Authenticate user credentials and return active role session |
-| `POST` | `/api/generate-blueprint` | Student | Execute 4-agent council to formulate project blueprint |
-| `GET` | `/api/user/history` | Student | Fetch all saved project blueprints for authenticated student |
-| `GET` | `/api/faculty/blueprints` | Faculty | Fetch institutional project submissions across all batches |
-| `POST` | `/api/faculty/review` | Faculty | Record supervisor review comments and approval verdicts |
-| `POST` | `/api/mentor/assign` | Faculty | Claim or assign a faculty supervisor to a student capstone |
-| `POST` | `/api/student/submit-log` | Student | Log bi-weekly sprint hours, achievements, and blockers |
-| `POST` | `/api/mentor/verify-log` | Faculty | Supervisor approval or clarification request for sprint logs |
-| `POST` | `/api/faculty/viva-grading` | Faculty | Record official 50-mark viva score breakdown and verdict |
-| `GET` | `/api/faculty/viva-scores` | Faculty | Fetch recorded viva scorecard archives across all batches |
-| `POST` | `/api/projects/pitfalls` | Public | Generate dynamic Groq-powered architectural pitfalls for domain |
-| `POST` | `/api/faculty/verify-report`| Faculty | Run automated structural compliance audit on thesis manuscripts |
-| `POST` | `/api/faculty/announcements`| Faculty | Broadcast cohort-wide submission deadlines and viva notices |
-| `GET` | `/api/announcements` | Authenticated | Retrieve active cohort announcements for noticeboards |
-| `GET` | `/api/export/pdf` | Authenticated | Export executive architectural blueprint into formatted PDF |
-| `GET` | `/api/export/docx` | Authenticated | Export project blueprint to Microsoft Word (`.docx`) |
-| `GET` | `/api/export/thesis-pdf` | Authenticated | Compile and export complete 14-section thesis manuscript PDF |
+| `POST` | `/api/auth/register` | Anyone | Create a new student or faculty account. |
+| `POST` | `/api/auth/login` | Anyone | Sign in and receive an active user session. |
+| `POST` | `/api/generate-blueprint` | Student | Run the 4-agent AI council to create a project blueprint. |
+| `GET` | `/api/user/history` | Student | Get all saved projects belonging to the logged-in student. |
+| `GET` | `/api/faculty/blueprints` | Faculty | View all project submissions across the whole department. |
+| `POST` | `/api/faculty/review` | Faculty | Submit supervisor review comments and approval verdicts. |
+| `POST` | `/api/mentor/assign` | Faculty | Claim or assign a faculty guide to a student project. |
+| `POST` | `/api/student/submit-log` | Student | Submit bi-weekly hours, accomplishments, and blockers. |
+| `POST` | `/api/mentor/verify-log` | Faculty | Approve or ask for clarification on student sprint logs. |
+| `POST` | `/api/faculty/viva-grading` | Faculty | Submit the official 50-mark viva score and verdict. |
+| `GET` | `/api/faculty/viva-scores` | Faculty | View all recorded viva scores for archiving. |
+| `POST` | `/api/projects/pitfalls` | Anyone | Generate common mistakes and examiner questions for any topic. |
+| `POST` | `/api/faculty/announcements`| Faculty | Broadcast a notice with deadline dates to all students. |
+| `GET` | `/api/announcements` | Both | Fetch active announcements to display on noticeboards. |
+| `GET` | `/api/export/pdf` | Student | Download executive architecture summary as a clean PDF. |
+| `GET` | `/api/export/docx` | Student | Download editable project blueprint in Microsoft Word format. |
+| `GET` | `/api/export/thesis-pdf` | Student | Compile and download complete 14-chapter thesis in PDF. |
 
 ---
 
-## 🚀 Getting Started & Installation
+## 🚀 Quick Start Guide
+
+Follow these steps to run the complete platform on your computer in under 5 minutes.
 
 ### 1. Prerequisites
-Ensure the following runtimes are installed on your host system:
-* **Node.js**: `v18.x` or higher (`v20.x` recommended)
-* **Python**: `3.10` or higher
-* **MongoDB**: Local MongoDB instance (`port 27017`) or active [MongoDB Atlas](https://www.mongodb.com/atlas) connection URI
-* **Groq Cloud API Key**: Obtain a free, high-speed API key from [console.groq.com](https://console.groq.com)
+Make sure you have installed:
+* **Node.js** (version 18 or higher) - [Download](https://nodejs.org/)
+* **Python** (version 3.10 or higher) - [Download](https://python.org/)
+* **MongoDB** (Local instance or free [MongoDB Atlas](https://www.mongodb.com/atlas) cloud URI)
+* **Groq API Key** (Free, takes 30 seconds at [console.groq.com](https://console.groq.com))
 
 ---
 
-### 2. Backend Installation
+### 2. Backend Setup (FastAPI)
 
-1. Navigate into the `backend/` directory:
+1. Open a terminal and enter the `backend/` directory:
    ```bash
    cd backend
    ```
 
-2. Create and activate a dedicated Python virtual environment:
+2. Create and activate a Python virtual environment:
    ```bash
-   # Windows (PowerShell / Command Prompt)
+   # On Windows (PowerShell / CMD):
    python -m venv venv
    venv\Scripts\activate
 
-   # macOS / Linux
+   # On macOS or Linux:
    python3 -m venv venv
    source venv/bin/activate
    ```
 
-3. Install required Python packages:
+3. Install the dependencies:
    ```bash
    pip install -r requirements.txt
    ```
@@ -325,85 +288,62 @@ Ensure the following runtimes are installed on your host system:
 4. Create a `.env` file in the project root or `backend/` folder:
    ```env
    GROQ_API_KEY=gsk_your_groq_api_key_here
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority
-   DATABASE_NAME=ai_project_mentor_db
+   MONGO_URI=mongodb://localhost:27017
+   DB_NAME=ai_project_mentor
    ```
 
-5. Launch the FastAPI ASGI server:
+5. Start the backend server:
    ```bash
    uvicorn main:app --reload --port 8000
    ```
-   * **API Root**: [http://127.0.0.1:8000](http://127.0.0.1:8000)
-   * **Interactive Swagger UI**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-   * **ReDoc Documentation**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+   * Backend runs at: **http://127.0.0.1:8000**
+   * Interactive API docs: **http://127.0.0.1:8000/docs**
 
 ---
 
-### 3. Frontend Installation
+### 3. Frontend Setup (React + Vite)
 
-1. Open a new terminal and navigate into `frontend-react/`:
+1. Open a **second terminal** and enter the `frontend-react/` directory:
    ```bash
    cd frontend-react
    ```
 
-2. Install Node.js dependencies:
+2. Install the frontend packages:
    ```bash
    npm install
    ```
 
-3. Start the Vite development server:
+3. Start the frontend development server:
    ```bash
    npm run dev
    ```
-   * **Web Application Portal**: [http://localhost:5174](http://localhost:5174)
+   * Open your browser at: **http://localhost:5174**
 
 ---
 
-## 👥 User Roles & End-to-End Workflows
+## 👥 User Roles & How to Use
 
-### 👨‍🎓 Student End-to-End Journey
-```
-1. Sign In ➡️ 2. Formulate Blueprint ➡️ 3. Execute Kanban ➡️ 4. Bi-Weekly Log ➡️ 5. Viva Prep ➡️ 6. Export Thesis
-```
-1. **Access Portal**: Sign in with student credentials to view the personal project dashboard.
-2. **AI Architecture Wizard**: Submit project name, domain, and problem statement to receive a tailored academic blueprint.
-3. **Sprint & Task Execution**: Organize tasks across Kanban columns (*To Do*, *In Progress*, *Done*) and update live progress percentage.
-4. **Bi-Weekly Accountability**: Submit logged development hours, completed tasks, and technical blockers for faculty sign-off.
-5. **AI Viva Simulation**: Practice defending the project against challenging questions asked by the context-aware AI Examiner.
-6. **Thesis Manuscript Export**: Compile the final 14-section thesis into print-ready PDF or Word (`.docx`) format.
+### 👨‍🎓 For Students:
+1. Open **http://localhost:5174** and choose **"Student Sign In"** (or click Register to create your account).
+2. Go to **Workspace** and type in your project idea. Click **Generate Blueprint** to let the 4 AI agents plan your architecture.
+3. Open the **Kanban Board** to organize your tasks into *To Do*, *In Progress*, and *Done*.
+4. Go to **My Progress** to update your completion slider and log your bi-weekly work hours.
+5. Click **AI Mentor Chat** whenever you want to test yourself with mock viva questions.
+6. When ready, go to **Thesis Generator** and click **Export PDF** or **Export Word** to download your full thesis!
 
----
-
-### 👩‍🏫 Faculty & Examiner End-to-End Journey
-```
-1. Faculty Sign In ➡️ 2. Supervise Mentees ➡️ 3. Track Batch ➡️ 4. Audit Manuscripts ➡️ 5. Grade Viva Defense
-```
-1. **Institutional Login**: Access the supervisor evaluation dashboard.
-2. **Review & Allocate**: Review submitted student blueprints, provide architectural notes, and approve projects.
-3. **Log Verification**: Audit bi-weekly sprint logs, verify student development hours, and address roadblocks.
-4. **Cohort Announcements**: Post binding deadlines, preliminary review schedules, and viva guidelines.
-5. **Final Examination & Scoring**: Use the digital 50-mark scorecard during the oral viva defense to compute grades and log formal committee verdicts.
-
----
-
-## 🛡️ Reliability & Fault Tolerance
-
-* **Automated LLM Fallback Chain**: In the event of upstream rate limits or decommissioned models, the system automatically routes queries through a multi-model fallback chain (`llama-3.3-70b-versatile` $\rightarrow$ `llama-3.1-8b-instant` $\rightarrow$ `qwen/qwen3.8-27b` $\rightarrow$ `mixtral-8x7b-32768`), guaranteeing zero downtime during viva season.
-* **Resilient Startup Error Sanitization**: Automated cache sanitization cleanses any stored legacy API errors from MongoDB Atlas on server reboot.
-* **CORS & Data Protection**: Cross-Origin Resource Sharing is configured to support institutional subdomains, and MongoDB Atlas connections utilize TLS 1.3 encryption.
-
----
-
-## 📜 Academic Honor Code & Attribution
-
-This platform is developed for university engineering departments to foster academic integrity, architectural excellence, and transparent research. All AI-generated blueprints serve as educational scaffolding; students are required to write, test, and defend their own implementation code.
+### 👩‍🏫 For Faculty & Guides:
+1. Open **http://localhost:5174** and choose **"Faculty Sign In"**.
+2. Go to **Department Roster** to view all student teams and click **Claim as Guide** for your teams.
+3. In **My Mentees**, inspect weekly progress, check reported blockers, and approve sprint logs.
+4. Use **Noticeboard** to post important deadlines or submission announcements.
+5. On final exam day, open **Viva Grading**, enter the team's project name, and record their marks across the 4 standard categories (out of 50).
 
 ---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for complete details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 <div align="center">
-  <sub>Engineered with precision for University Engineering Capstone Departments. From Project Idea to Final Viva Defense.</sub>
+  <sub>Built for engineering students and professors. From Project Idea to Final Viva Defense. 🎓</sub>
 </div>
