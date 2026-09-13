@@ -1,59 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown';
 import { 
-  Send, 
   Bot, 
+  Send, 
   User, 
-  Sparkles, 
-  FolderGit2, 
+  Trash2, 
   ChevronDown, 
-  CheckCircle2, 
-  HelpCircle, 
-  GraduationCap, 
-  ShieldCheck, 
-  Zap, 
-  BookOpen, 
-  Trash2,
-  CornerDownLeft
+  Check, 
+  CornerDownLeft 
 } from 'lucide-react';
 
 const API_BASE = 'http://127.0.0.1:8000';
 
-const SUGGESTED_QUESTIONS = [
-  {
-    icon: GraduationCap,
-    title: "Viva Defense Prep",
-    query: "What are the most challenging viva questions a professor or external examiner might ask about this project, and how should I answer them?"
-  },
-  {
-    icon: ShieldCheck,
-    title: "Security & Edge Cases",
-    query: "What security vulnerabilities, rate limits, or edge cases should I safeguard against before deploying this app?"
-  },
-  {
-    icon: Zap,
-    title: "Architecture Review",
-    query: "How can I optimize the data flow and latency between my frontend client, FastAPI backend, and MongoDB database?"
-  },
-  {
-    icon: BookOpen,
-    title: "Literature Review Tips",
-    query: "What key academic papers, benchmarks, or industry standards should I cite in my project report for this domain?"
-  }
-];
-
-export default function ChatMentorPage({ user, activeBlueprint }) {
-  const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(
-    activeBlueprint?.project_details?.name || activeBlueprint?.name || ''
-  );
-  const [activeProjectData, setActiveProjectData] = useState(activeBlueprint || null);
-
-  const [messages, setMessages] = useState([]);
+export default function ChatMentorPage({ user, activeBlueprint, projects: propProjects = [] }) {
+  const [projects, setProjects] = useState(propProjects);
+  const [currentProject, setCurrentProject] = useState(activeBlueprint || (propProjects[0] || null));
+  const [messages, setMessages] = useState([
+    {
+      sender: 'bot',
+      text: "Hello! I am your lead academic project mentor. Ask me any viva defense questions, architecture advice, or implementation steps for your capstone project."
+    }
+  ]);
   const [inputQuery, setInputQuery] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const messagesEndRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -62,363 +32,289 @@ export default function ChatMentorPage({ user, activeBlueprint }) {
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
+        setDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch user projects list
+  // Fetch user projects list if not provided or to ensure fresh history
   useEffect(() => {
     if (user?.email) {
       axios.get(`${API_BASE}/api/user/history?email=${encodeURIComponent(user.email)}`)
         .then((res) => {
-          setProjects(res.data || []);
-          if (!selectedProject && res.data && res.data.length > 0) {
-            const first = res.data[0];
-            setSelectedProject(first.project_details?.name || first.name || '');
-            setActiveProjectData(first);
+          const list = res.data || [];
+          setProjects(list);
+          if (!currentProject && list.length > 0) {
+            const activeMatch = activeBlueprint 
+              ? list.find(p => (p.project_details?.name || p.name) === (activeBlueprint.project_details?.name || activeBlueprint.name))
+              : null;
+            setCurrentProject(activeMatch || list[0]);
           }
         })
-        .catch(() => setProjects([]));
+        .catch(() => {});
     }
-  }, [user]);
+  }, [user, activeBlueprint]);
 
-  // Sync selected project data and load persistent chat history
   useEffect(() => {
-    if (selectedProject && projects.length > 0) {
-      const match = projects.find(
-        p => (p.project_details?.name || p.name) === selectedProject
-      );
-      if (match) setActiveProjectData(match);
+    if (activeBlueprint) {
+      setCurrentProject(activeBlueprint);
+    } else if (projects.length > 0 && !currentProject) {
+      setCurrentProject(projects[0]);
     }
+  }, [activeBlueprint, projects]);
 
-    if (selectedProject) {
-      const savedChatKey = `mentor_chat_${user?.email || 'guest'}_${selectedProject}`;
-      const saved = localStorage.getItem(savedChatKey);
-      if (saved) {
-        try {
-          setMessages(JSON.parse(saved));
-        } catch {
-          setMessages([]);
+  // Load chat history from localStorage
+  useEffect(() => {
+    if (currentProject) {
+      const projName = currentProject?.project_details?.name || currentProject?.name;
+      if (projName) {
+        const savedChatKey = `mentor_chat_${user?.email || 'guest'}_${projName}`;
+        const saved = localStorage.getItem(savedChatKey);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setMessages(parsed);
+              return;
+            }
+          } catch (e) {}
         }
-      } else {
-        setMessages([]);
       }
     }
-  }, [selectedProject, projects, user?.email]);
+  }, [currentProject, user]);
 
-  // Scroll to bottom on new messages
-  useEffect(() => {
+  const saveChatHistory = (newMessages) => {
+    setMessages(newMessages);
+    const projName = currentProject?.project_details?.name || currentProject?.name;
+    if (projName) {
+      const savedChatKey = `mentor_chat_${user?.email || 'guest'}_${projName}`;
+      localStorage.setItem(savedChatKey, JSON.stringify(newMessages));
+    }
+  };
+
+  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [messages, loading]);
 
-  const saveChatHistory = (updated) => {
-    setMessages(updated);
-    if (selectedProject) {
-      const savedChatKey = `mentor_chat_${user?.email || 'guest'}_${selectedProject}`;
-      localStorage.setItem(savedChatKey, JSON.stringify(updated));
-    }
-  };
+  const handleSendMessage = async (e) => {
+    e?.preventDefault();
+    if (!inputQuery.trim() || loading) return;
 
-  const handleClearChat = () => {
-    if (window.confirm("Clear this conversation history?")) {
-      saveChatHistory([]);
-    }
-  };
-
-  const handleSendMessage = async (textToSend) => {
-    const query = (textToSend || inputQuery).trim();
-    if (!query || loading) return;
-
-    const userMessage = {
-      role: 'user',
-      content: query,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    const updatedWithUser = [...messages, userMessage];
-    saveChatHistory(updatedWithUser);
+    const userMsg = inputQuery.trim();
     setInputQuery('');
+    const updatedWithUser = [...messages, { sender: 'user', text: userMsg }];
+    saveChatHistory(updatedWithUser);
     setLoading(true);
 
-    // Build context string from active project
-    const context = activeProjectData ? `
-Project: ${activeProjectData.project_details?.name || activeProjectData.name}
-Domain: ${activeProjectData.project_details?.domain || 'Computer Engineering'}
-Problem: ${activeProjectData.project_details?.problem_statement || ''}
-Key Tech: ${activeProjectData.technology_stack || ''}
-Scope: ${activeProjectData.scope_definition || ''}
-    `.trim() : 'Academic Software Engineering Project';
+    const projName = currentProject?.project_details?.name || currentProject?.name || 'My Capstone Project';
+    const projContext = `
+      Domain: ${currentProject?.project_details?.domain || 'Engineering'}
+      Problem Statement: ${currentProject?.project_details?.problem_statement || ''}
+      Scope: ${currentProject?.scope_definition || ''}
+      Tech Stack: ${currentProject?.technology_stack || ''}
+    `;
 
     try {
       const res = await axios.post(`${API_BASE}/api/mentor/chat`, {
-        project_name: selectedProject || 'Engineering Project',
-        context: context,
-        query: query
+        project_name: projName,
+        context: projContext,
+        query: userMsg
       });
 
-      const assistantMessage = {
-        role: 'assistant',
-        content: res.data.reply || "I've reviewed your query. Please refer to your active architecture specifications.",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-
-      saveChatHistory([...updatedWithUser, assistantMessage]);
+      const reply = res.data?.reply || 'Could not generate advice at this moment.';
+      saveChatHistory([...updatedWithUser, { sender: 'bot', text: reply }]);
     } catch (err) {
-      const errorMessage = {
-        role: 'assistant',
-        content: "Sorry, I had trouble connecting to the advisory server. Please check your backend connection.",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      saveChatHistory([...updatedWithUser, errorMessage]);
+      console.error(err);
+      saveChatHistory([
+        ...updatedWithUser, 
+        { sender: 'bot', text: 'Error connecting to the AI Mentor server. Please check your backend connection.' }
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleClearChat = () => {
+    const cleared = [
+      {
+        sender: 'bot',
+        text: "Conversation cleared. Feel free to ask another question about your system design or viva preparation."
+      }
+    ];
+    saveChatHistory(cleared);
+  };
+
+  const currentName = currentProject?.project_details?.name || currentProject?.name || 'Select Project';
+  const currentDomain = currentProject?.project_details?.domain || 'General';
+
   return (
-    <div className="max-w-6xl mx-auto p-6 sm:p-10 flex flex-col h-[calc(100vh-2rem)]">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200 shrink-0">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-black uppercase tracking-wider mb-2">
-            <Sparkles className="w-3.5 h-3.5 stroke-[2.5]" />
-            AI Academic Advisor
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-            AI Mentor Chat
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Online
-            </span>
-          </h1>
-          <p className="text-sm font-medium text-slate-500 mt-0.5">
-            Context-aware technical mentoring and viva preparation for your active project.
-          </p>
-        </div>
-
-        {/* Right Header Actions */}
-        <div className="flex items-center gap-3">
-          {messages.length > 0 && (
-            <button
-              onClick={handleClearChat}
-              title="Clear conversation"
-              className="p-2.5 border border-slate-200 hover:bg-red-50 hover:border-red-200 text-slate-400 hover:text-red-600 rounded-xl transition-all cursor-pointer"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          )}
-
-          {/* Custom Project Selector Dropdown */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              type="button"
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center justify-between gap-3 px-4 py-2.5 bg-white border-2 border-slate-200 hover:border-blue-500 rounded-xl shadow-xs transition-all cursor-pointer min-w-[220px]"
-            >
-              <div className="flex items-center gap-2.5 truncate">
-                <FolderGit2 className="w-4 h-4 text-blue-600 shrink-0" />
-                <span className="text-xs font-black text-slate-800 truncate">
-                  {selectedProject || 'Select Project...'}
+    <div className="p-4 sm:p-6 flex flex-col items-center justify-center min-h-full">
+      <div className="h-[calc(100vh-3.5rem)] flex flex-col overflow-hidden max-w-5xl mx-auto w-full bg-white border border-slate-200/90 rounded-3xl shadow-xs">
+        {/* 1. FIXED TOP HEADER (shrink-0: Never scrolls away) */}
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-black">
+              <Bot className="w-5 h-5"/>
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-black text-slate-900 tracking-tight">
+                  AI Mentor Chat
+                </h2>
+                <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-[10px] font-black uppercase text-emerald-700 tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Online
                 </span>
               </div>
-              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isDropdownOpen ? 'rotate-180 text-blue-600' : ''}`} />
-            </button>
+              <p className="text-xs font-semibold text-slate-400">
+                Context-aware technical mentoring and viva preparation.
+              </p>
+            </div>
+          </div>
 
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                <div className="p-2.5 bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-500 flex justify-between">
-                  <span>Switch Project Context</span>
-                  <span>{projects.length} Total</span>
-                </div>
-                <div className="max-h-56 overflow-y-auto p-1.5 space-y-1">
-                  {projects.map((p, idx) => {
-                    const pName = p.project_details?.name || p.name || `Project ${idx + 1}`;
-                    const isSelected = pName === selectedProject;
+          {/* Project Selector Dropdown + Clear Chat */}
+          <div className="flex items-center gap-2">
+            {/* Active Project Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-400 text-xs font-bold text-slate-800 transition-all cursor-pointer max-w-xs"
+              >
+                <span className="truncate max-w-[140px] font-black text-slate-900">{currentName}</span>
+                <span className="px-1.5 py-0.5 rounded bg-blue-100/80 text-blue-800 text-[10px] uppercase font-black shrink-0">
+                  {currentDomain}
+                </span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 p-1.5 space-y-1 max-h-64 overflow-y-auto">
+                  {projects.map((proj, idx) => {
+                    const pName = proj.project_details?.name || proj.name;
+                    const isSel = (currentProject?.name === proj.name || currentProject?.project_details?.name === pName);
                     return (
-                      <button
+                      <div
                         key={idx}
                         onClick={() => {
-                          setSelectedProject(pName);
-                          setIsDropdownOpen(false);
+                          setCurrentProject(proj);
+                          setDropdownOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
-                          isSelected ? 'bg-blue-600 text-white' : 'text-slate-700 hover:bg-slate-100'
+                        className={`p-2.5 rounded-xl text-xs font-bold flex items-center justify-between cursor-pointer transition-all ${
+                          isSel ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'
                         }`}
                       >
-                        <span className="truncate pr-2">{pName}</span>
-                        {isSelected && <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-white" />}
-                      </button>
+                        <span className="truncate flex-1">{pName}</span>
+                        {isSel && <Check className="w-3.5 h-3.5 text-blue-600 shrink-0 stroke-[3]"/>}
+                      </div>
                     );
                   })}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+
+            <button
+              onClick={handleClearChat}
+              title="Clear Chat History"
+              className="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-all cursor-pointer"
+            >
+              <Trash2 className="w-4 h-4"/>
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Chat Messages Container */}
-      <div className="flex-1 overflow-y-auto py-6 space-y-6 pr-2">
-        {messages.length === 0 ? (
-          /* Empty State / Welcome Screen */
-          <div className="h-full flex flex-col items-center justify-center max-w-2xl mx-auto text-center py-8">
-            <div className="w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 mb-4">
-              <Bot className="w-9 h-9 stroke-[2.2]" />
-            </div>
-
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Ready to guide your project: {selectedProject || 'Your Project'}
-            </h3>
-            <p className="text-sm font-medium text-slate-500 mt-1 max-w-md">
-              I have loaded your architecture, technology stack, and timeline. Ask me anything about coding bottlenecks, examiner questions, or thesis formatting.
-            </p>
-
-            {/* Quick Prompt Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mt-8 text-left">
-              {SUGGESTED_QUESTIONS.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => handleSendMessage(item.query)}
-                    className="p-4 bg-white border border-slate-200 hover:border-blue-500 hover:shadow-md rounded-2xl transition-all group cursor-pointer text-left flex items-start gap-3"
-                  >
-                    <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
-                      <Icon className="w-4 h-4 stroke-[2.2]" />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-black text-slate-900 group-hover:text-blue-600 transition-colors">
-                        {item.title}
-                      </h4>
-                      <p className="text-xs font-medium text-slate-500 line-clamp-2 mt-0.5 leading-relaxed">
-                        {item.query}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          /* Message List */
-          messages.map((msg, index) => {
-            const isUser = msg.role === 'user';
+        {/* 2. MIDDLE CHAT SCROLL AREA (flex-1 overflow-y-auto: Only this part scrolls) */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
+          {messages.map((msg, index) => {
+            const isUser = msg.sender === 'user' || msg.role === 'user';
+            const textContent = msg.text || msg.content || '';
             return (
               <div
                 key={index}
-                className={`flex gap-3.5 max-w-3xl ${isUser ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
+                className={`flex items-start gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
               >
-                {/* Avatar */}
-                <div
-                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
-                    isUser
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-blue-600 text-white'
-                  }`}
-                >
-                  {isUser ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5 stroke-[2.2]" />}
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-2xs ${
+                  isUser 
+                    ? 'bg-slate-900 text-white' 
+                    : 'bg-blue-600 text-white shadow-blue-500/20'
+                }`}>
+                  {isUser ? <User className="w-4 h-4"/> : <Bot className="w-4 h-4"/>}
                 </div>
 
-                {/* Message Bubble */}
-                <div className="space-y-1">
-                  <div
-                    className={`p-5 rounded-2xl text-sm leading-relaxed ${
-                      isUser
-                        ? 'bg-blue-600 text-white font-medium rounded-tr-xs shadow-md shadow-blue-500/20'
-                        : 'bg-white border border-slate-200 text-slate-800 rounded-tl-xs shadow-xs'
-                    }`}
-                  >
-                    {isUser ? (
-                      <p className="whitespace-pre-wrap">{msg.content}</p>
-                    ) : (
-                      <div className="space-y-2">
-                        <ReactMarkdown
-                          components={{
-                            p: ({ node, ...props }) => <p className="mb-2 last:mb-0 leading-relaxed font-normal" {...props} />,
-                            strong: ({ node, ...props }) => <strong className="font-extrabold text-slate-950 inline" {...props} />,
-                            ul: ({ node, ...props }) => <ul className="list-disc list-outside space-y-1.5 my-2.5 ml-4" {...props} />,
-                            ol: ({ node, ...props }) => <ol className="list-decimal list-outside space-y-1.5 my-2.5 ml-4" {...props} />,
-                            li: ({ node, ...props }) => <li className="text-slate-700 font-medium" {...props} />,
-                            code: ({ node, inline, className, children, ...props }) => {
-                              return !inline ? (
-                                <pre className="my-2.5 rounded-xl overflow-x-auto border border-slate-800 bg-slate-900 text-slate-100 p-3.5 font-mono text-xs leading-relaxed">
-                                  <code>{children}</code>
-                                </pre>
-                              ) : (
-                                <code className="bg-slate-100 text-blue-700 px-1.5 py-0.5 rounded font-mono text-xs font-semibold" {...props}>
-                                  {children}
-                                </code>
-                              );
-                            }
-                          }}
-                        >
-                          {msg.content}
-                        </ReactMarkdown>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Timestamp */}
-                  <span className={`text-[11px] font-semibold text-slate-400 block px-1 ${isUser ? 'text-right' : 'text-left'}`}>
-                    {msg.timestamp}
-                  </span>
+                <div className={`max-w-2xl p-5 rounded-3xl text-sm leading-relaxed ${
+                  isUser
+                    ? 'bg-blue-600 text-white rounded-tr-xs font-semibold'
+                    : 'bg-slate-50 border border-slate-200/80 text-slate-800 rounded-tl-xs'
+                }`}>
+                  {isUser ? (
+                    <p>{textContent}</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {textContent.split('\n').map((line, lIdx) => {
+                        const clean = line.trim();
+                        if (!clean) return <div key={lIdx} className="h-1"/>;
+                        
+                        const formatted = clean.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        return (
+                          <p 
+                            key={lIdx} 
+                            className="text-slate-700 font-medium leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: formatted }}
+                          />
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
             );
-          })
-        )}
+          })}
 
-        {/* Typing / Loading Bubble */}
-        {loading && (
-          <div className="flex gap-3.5 max-w-md mr-auto animate-in fade-in duration-200">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-              <Bot className="w-5 h-5 stroke-[2.2]" />
+          {loading && (
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+                <Bot className="w-4 h-4 animate-spin"/>
+              </div>
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-500 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                Synthesizing response for {currentName}...
+              </div>
             </div>
-            <div className="p-4 bg-white border border-slate-200 rounded-2xl rounded-tl-xs shadow-xs flex items-center gap-2 text-slate-600 text-xs font-bold">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
-              <span>Advisor is reviewing your project context...</span>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* 3. FIXED BOTTOM QUESTION INPUT BAR (shrink-0: Permanently pinned at the bottom) */}
+        <div className="p-4 border-t border-slate-100 bg-white shrink-0">
+          <form onSubmit={handleSendMessage} className="relative flex items-center">
+            <input
+              type="text"
+              value={inputQuery}
+              onChange={(e) => setInputQuery(e.target.value)}
+              placeholder={`Ask a technical or viva question about ${currentName}...`}
+              className="w-full pl-5 pr-28 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:bg-white focus:border-blue-600 focus:ring-4 focus:ring-blue-50 focus:outline-none transition-all placeholder:text-slate-400"
+            />
+            <div className="absolute right-2 flex items-center gap-2">
+              <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-slate-400 px-2 py-1 bg-slate-100 rounded-md">
+                <CornerDownLeft className="w-3 h-3"/> Enter
+              </span>
+              <button
+                type="submit"
+                disabled={!inputQuery.trim() || loading}
+                className="w-10 h-10 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white flex items-center justify-center transition-all cursor-pointer shadow-xs disabled:cursor-not-allowed"
+              >
+                <Send className="w-4 h-4"/>
+              </button>
             </div>
-          </div>
-        )}
-
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Input Box Footer */}
-      <div className="pt-4 border-t border-slate-200 shrink-0">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSendMessage();
-          }}
-          className="relative flex items-center bg-white border-2 border-slate-300 focus-within:border-blue-600 rounded-2xl shadow-xs transition-all p-1.5"
-        >
-          <input
-            type="text"
-            value={inputQuery}
-            onChange={(e) => setInputQuery(e.target.value)}
-            disabled={loading}
-            placeholder={`Ask a technical or viva question about ${selectedProject || 'your project'}...`}
-            className="flex-1 px-4 py-3 bg-transparent text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none"
-          />
-
-          <div className="flex items-center gap-2 pr-1.5">
-            <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">
-              <CornerDownLeft className="w-3 h-3" /> Enter
-            </span>
-
-            <button
-              type="submit"
-              disabled={loading || !inputQuery.trim()}
-              className="p-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white rounded-xl shadow-md shadow-blue-500/20 active:scale-[0.96] transition-all cursor-pointer disabled:cursor-not-allowed"
-            >
-              <Send className="w-4 h-4 stroke-[2.5]" />
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

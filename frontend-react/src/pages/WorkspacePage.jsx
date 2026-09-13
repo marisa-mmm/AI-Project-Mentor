@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { 
   Sparkles, 
   ArrowRight, 
+  ArrowLeft,
   Lightbulb, 
   Target, 
   Cpu, 
@@ -14,18 +15,80 @@ import {
   FileType, 
   GraduationCap, 
   Layers, 
-  Rocket 
+  Rocket,
+  CheckCircle2,
+  HelpCircle
 } from 'lucide-react';
 
 const API_BASE = 'http://127.0.0.1:8000';
 
+const LEVEL_QUESTIONS = {
+  Beginner: [
+    {
+      id: 'q1',
+      question: '1. What problem are you solving?',
+      placeholder: 'Describe the main difficulty, frustration, or issue you want to fix...'
+    },
+    {
+      id: 'q2',
+      question: '2. What is your idea?',
+      placeholder: 'Explain what your application or website will do to solve this...'
+    },
+    {
+      id: 'q3',
+      question: '3. What feature you want to implement?',
+      placeholder: 'List 2 or 3 main buttons, pages, or features users will use...'
+    }
+  ],
+  Intermediate: [
+    {
+      id: 'q1',
+      question: '1. What is the problem and what solution are you planning?',
+      placeholder: 'Detail the current bottleneck and how your platform proposes to solve it...'
+    },
+    {
+      id: 'q2',
+      question: '2. What core features you want to add?',
+      placeholder: 'Detail the essential MVP features, workflows, or role-based interactions...'
+    },
+    {
+      id: 'q3',
+      question: '3. Who are your users?',
+      placeholder: 'Identify the target audience (e.g., college students, admins, doctors, customers)...'
+    }
+  ],
+  Advanced: [
+    {
+      id: 'q1',
+      question: '1. What is your Problem Statement and system scope?',
+      placeholder: 'State the engineering challenge, technical inefficiency, or research gap addressed...'
+    },
+    {
+      id: 'q2',
+      question: '2. What core features and architectural components will you implement?',
+      placeholder: 'Specify key algorithmic workflows, data pipelines, and core functional features...'
+    },
+    {
+      id: 'q3',
+      question: '3. Who are your target users and how will they interact with the platform?',
+      placeholder: 'Detail user roles, access requirements, and expected operational interactions...'
+    }
+  ]
+};
+
 export default function WorkspacePage({ user, selectedBlueprint }) {
-  const [step, setStep] = useState(selectedBlueprint ? 2 : 1);
+  // screen: 1 = Initial Setup, 2 = Skill Questions, 3 = Generated Blueprint
+  const [screen, setScreen] = useState(selectedBlueprint ? 3 : 1);
+
   const [name, setName] = useState('');
   const [domain, setDomain] = useState('');
   const [durationMonths, setDurationMonths] = useState(3);
   const [rawIdea, setRawIdea] = useState('');
   const [level, setLevel] = useState('Beginner');
+
+  // Stores answers to screen 2 questions
+  const [answers, setAnswers] = useState({});
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -35,7 +98,15 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
   useEffect(() => {
     if (selectedBlueprint) {
       setBlueprint(selectedBlueprint);
-      setStep(2);
+      setName(selectedBlueprint.project_details?.name || selectedBlueprint.name || '');
+      setDomain(selectedBlueprint.project_details?.domain || '');
+      setDurationMonths(selectedBlueprint.project_details?.duration_months || 3);
+      setRawIdea(selectedBlueprint.project_details?.problem_statement || '');
+      setScreen(3);
+      setActiveTab('idea');
+    } else {
+      setBlueprint(null);
+      setScreen(1);
     }
   }, [selectedBlueprint]);
 
@@ -44,21 +115,21 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
       id: 'Beginner', 
       title: 'Beginner', 
       tag: 'Foundational', 
-      desc: 'Standard architectures, guided design patterns, and foundational tutorials.', 
+      desc: 'Standard monolithic architectures, guided design patterns, and foundational tutorials.', 
       icon: GraduationCap 
     },
     { 
       id: 'Intermediate', 
       title: 'Intermediate', 
       tag: 'Standard', 
-      desc: 'Modular microservices, asynchronous jobs, and automated testing.', 
+      desc: 'Modular microservices, asynchronous jobs, token security, and automated testing.', 
       icon: Layers 
     },
     { 
       id: 'Advanced', 
       title: 'Advanced', 
       tag: 'Production-Grade', 
-      desc: 'Scalable cloud pipelines, distributed caching, and latency optimization.', 
+      desc: 'Clean scalable architecture, structured pipelines, caching, and modular optimization.', 
       icon: Rocket 
     }
   ];
@@ -72,30 +143,52 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
     { id: 'thesis', label: '6. Thesis Format', icon: BookText }
   ];
 
-  const handleGenerateBlueprint = async (e) => {
+  const handleGoToQuestions = (e) => {
     e.preventDefault();
     if (!rawIdea.trim()) {
-      setError('Please describe your project idea.');
+      setError('Please provide a 2-3 line description of your project.');
       return;
     }
     setError('');
+    setScreen(2);
+  };
+
+  const handleAnswerSelect = (questionId, optionValue) => {
+    setAnswers(prev => ({ ...prev, [questionId]: optionValue }));
+  };
+
+  const handleGenerateBlueprint = async () => {
+    setError('');
     setLoading(true);
+
+    const currentQuestions = LEVEL_QUESTIONS[level] || LEVEL_QUESTIONS.Beginner;
+    const detailedAnswers = currentQuestions
+      .map(q => `${q.question}\nAnswer: ${answers[q.id] || 'Not specified'}`)
+      .join('\n\n');
+
+    const fullProblemStatement = `${rawIdea.trim()}\n\nDetailed Requirements:\n${detailedAnswers}`;
 
     const payload = {
       name: name.trim() || `${rawIdea.slice(0, 20)} Platform`,
       domain: domain.trim() || 'Auto-Detect',
       duration_months: Number(durationMonths) || 3,
-      problem_statement: rawIdea.trim(),
+      problem_statement: fullProblemStatement,
       user_email: user?.email || 'student@university.edu'
     };
 
     try {
-      const res = await axios.post(`${API_BASE}/api/generate-blueprint`, payload);
-      setBlueprint(res.data);
-      setStep(2);
-      setActiveTab('idea');
+      const res = await axios.post(`${API_BASE}/api/generate-blueprint`, payload, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (res.data) {
+        setBlueprint(res.data);
+        setScreen(3);
+        setActiveTab('idea');
+      }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to generate blueprint. Check backend connection.');
+      console.error("Blueprint generation error:", err);
+      setError(err.response?.data?.detail || 'Failed to generate blueprint. Check your backend connection.');
     } finally {
       setLoading(false);
     }
@@ -126,9 +219,9 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
   };
 
   return (
-    <div className="p-8 sm:p-12 max-w-7xl mx-auto">
+    <div className="p-8 sm:p-12 max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-200">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
         <div>
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-black uppercase tracking-wider mb-2">
             <Sparkles className="w-4 h-4"/>
@@ -142,11 +235,14 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
           </p>
         </div>
 
-        {/* Action Buttons: Strictly side-by-side on one row */}
-        {blueprint && step === 2 && (
+        {/* Action Buttons: Visible only in Screen 3 */}
+        {blueprint && screen === 3 && (
           <div className="flex items-center gap-2.5 shrink-0 flex-nowrap">
             <button
-              onClick={() => setStep(1)}
+              onClick={() => {
+                setScreen(1);
+                setBlueprint(null);
+              }}
               className="px-3.5 py-2.5 border border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-bold rounded-xl cursor-pointer transition-all whitespace-nowrap shadow-xs"
             >
               Start New Project
@@ -173,16 +269,79 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
         )}
       </div>
 
+      {/* 3 Step Visual Indicators */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className={`p-4 rounded-2xl border-2 flex items-center gap-3.5 transition-all ${
+          screen === 1 
+            ? 'bg-blue-50/60 border-blue-500 text-blue-900 shadow-xs' 
+            : screen > 1 
+              ? 'bg-white border-emerald-300 text-slate-800' 
+              : 'bg-white border-slate-200 text-slate-600'
+        }`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
+            screen > 1 
+              ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' 
+              : 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
+          }`}>
+            {screen > 1 ? <CheckCircle2 className="w-5 h-5 stroke-[2.5]" /> : '01'}
+          </div>
+          <div>
+            <div className="text-xs font-black uppercase tracking-wider text-slate-400">Step 1</div>
+            <div className="text-sm font-black text-slate-900">Project Idea & Level</div>
+          </div>
+        </div>
+
+        <div className={`p-4 rounded-2xl border-2 flex items-center gap-3.5 transition-all ${
+          screen === 2 
+            ? 'bg-blue-50/60 border-blue-500 text-blue-900 shadow-xs' 
+            : screen > 2 
+              ? 'bg-white border-emerald-300 text-slate-800' 
+              : 'bg-slate-50/50 border-slate-200 text-slate-400'
+        }`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
+            screen === 2 
+              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' 
+              : screen > 2 
+                ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20' 
+                : 'bg-slate-200 text-slate-600'
+          }`}>
+            {screen > 2 ? <CheckCircle2 className="w-5 h-5 stroke-[2.5]" /> : '02'}
+          </div>
+          <div>
+            <div className="text-xs font-black uppercase tracking-wider text-slate-400">Step 2</div>
+            <div className="text-sm font-black text-slate-900">Quick Skill Questions</div>
+          </div>
+        </div>
+
+        <div className={`p-4 rounded-2xl border-2 flex items-center gap-3.5 transition-all ${
+          screen === 3 
+            ? 'bg-blue-50/60 border-blue-500 text-blue-900 shadow-xs' 
+            : 'bg-slate-50/50 border-slate-200 text-slate-400'
+        }`}>
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
+            screen === 3 
+              ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' 
+              : 'bg-slate-200 text-slate-600'
+          }`}>
+            03
+          </div>
+          <div>
+            <div className="text-xs font-black uppercase tracking-wider text-slate-400">Step 3</div>
+            <div className="text-sm font-black text-slate-900">Multi-Agent Blueprint</div>
+          </div>
+        </div>
+      </div>
+
       {error && (
-        <div className="mt-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl font-bold text-sm flex items-center gap-2.5">
+        <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl font-bold text-sm flex items-center gap-2.5">
           <span className="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0" />
           {error}
         </div>
       )}
 
-      {/* STEP 1: Ideation Form */}
-      {step === 1 && (
-        <form onSubmit={handleGenerateBlueprint} className="mt-8 space-y-8">
+      {/* SCREEN 1: Academic Level, Metadata, and 2-3 Line Problem Statement */}
+      {screen === 1 && (
+        <form onSubmit={handleGoToQuestions} className="space-y-8">
           <div className="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm space-y-8">
             <div>
               <label className="block text-lg font-black text-slate-900 tracking-tight mb-3">
@@ -238,14 +397,13 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
                 />
               </div>
 
-              {/* Domain Input with Auto-Detect Badge */}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-black text-slate-800 uppercase tracking-wider">
                     Domain (Optional)
                   </label>
                   <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
-                    AI Auto-Detects if empty
+                    AI Auto-Detects
                   </span>
                 </div>
                 <input
@@ -275,27 +433,88 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
 
             <div>
               <label className="block text-lg font-black text-slate-900 tracking-tight mb-2">
-                2. Describe Your Project Problem & Goal
+                2. Describe Your Project Problem & Goal (in 2-3 lines)
               </label>
               <textarea
                 required
-                rows={4}
+                rows={3}
                 value={rawIdea}
                 onChange={(e) => setRawIdea(e.target.value)}
-                placeholder="Explain the problem you want to solve, what users will experience, and the desired outcome. The AI will recommend technologies, determine the domain, and formulate the complete project roadmap for you."
+                placeholder="Briefly state what problem your application solves and what a user will achieve with it."
                 className="w-full p-5 bg-slate-50 border border-slate-300 focus:border-blue-600 rounded-2xl text-base font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all resize-none"
               />
             </div>
 
             <button
               type="submit"
+              className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-black text-base rounded-2xl shadow-lg shadow-blue-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-3 cursor-pointer"
+            >
+              <span>Continue to Skill Check</span>
+              <ArrowRight className="w-5 h-5 stroke-[2.5]"/>
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* SCREEN 2: DEDICATED SKILL QUESTIONS SCREEN */}
+      {screen === 2 && (
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm space-y-8 animate-in fade-in zoom-in-95 duration-150">
+          <div className="border-b border-slate-100 pb-6 flex items-center justify-between">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-black uppercase tracking-wider mb-2">
+                <HelpCircle className="w-4 h-4" />
+                {level} Level Questions
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Project Architecture Alignment
+              </h2>
+              <p className="text-sm font-medium text-slate-500 mt-1">
+                Provide specific details about your project vision. These help the AI agents recommend appropriate tools and realistic timelines.
+              </p>
+            </div>
+            <span className="text-xs font-black uppercase px-3 py-1 rounded-full bg-slate-100 text-slate-600">
+              Level: {level}
+            </span>
+          </div>
+
+          <div className="space-y-6">
+            {(LEVEL_QUESTIONS[level] || LEVEL_QUESTIONS.Beginner).map((q) => (
+              <div key={q.id} className="p-6 bg-slate-50/70 border border-slate-200 rounded-2xl space-y-3">
+                <label className="block text-base font-black text-slate-900">
+                  {q.question}
+                </label>
+                <textarea
+                  rows={3}
+                  value={answers[q.id] || ''}
+                  onChange={(e) => handleAnswerSelect(q.id, e.target.value)}
+                  placeholder={q.placeholder}
+                  className="w-full p-4 bg-white border border-slate-300 focus:border-blue-600 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-100 transition-all resize-none shadow-xs"
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between pt-4 border-t border-slate-100 gap-4">
+            <button
+              type="button"
+              onClick={() => setScreen(1)}
               disabled={loading}
-              className="w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-black text-base rounded-2xl shadow-lg shadow-blue-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"
+              className="px-5 py-3.5 border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-xl flex items-center gap-2 cursor-pointer transition-all"
+            >
+              <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
+              <span>Back</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleGenerateBlueprint}
+              disabled={loading}
+              className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-black text-base rounded-2xl shadow-lg shadow-blue-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"
             >
               {loading ? (
                 <>
                   <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Synthesizing Deep Multi-Agent Blueprint...</span>
+                  <span>Synthesizing Multi-Agent Blueprint (6-8s)...</span>
                 </>
               ) : (
                 <>
@@ -305,13 +524,12 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
               )}
             </button>
           </div>
-        </form>
+        </div>
       )}
 
-      {/* STEP 2: Multi-Tab Blueprint Display */}
-      {step === 2 && blueprint && (
-        <div className="mt-8 space-y-6">
-          {/* Large, Visible Tab Buttons */}
+      {/* SCREEN 3: MULTI-TAB BLUEPRINT VIEW */}
+      {screen === 3 && blueprint && (
+        <div className="space-y-6">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -341,7 +559,6 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
             })}
           </div>
 
-          {/* Active Tab Panel */}
           <div className="bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-sm min-h-[500px]">
             <div className="flex items-center gap-3.5 mb-6 pb-4 border-b border-slate-100 text-blue-600">
               <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600">
@@ -362,11 +579,15 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
                     ol: ({ node, ...props }) => <ol className="list-decimal list-outside space-y-2.5 mb-5 ml-5" {...props} />,
                     li: ({ node, ...props }) => <li className="text-slate-700 font-medium leading-relaxed" {...props} />,
                     code: ({ node, inline, className, children, ...props }) => {
-                      return !inline ? (
-                        <pre className="my-4 rounded-xl overflow-x-auto border border-slate-800 bg-slate-900 text-slate-100 p-4 font-mono text-sm leading-relaxed">
-                          <code>{children}</code>
-                        </pre>
-                      ) : (
+                      const match = /language-(\w+)/.exec(className || '');
+                      if (!inline && match) {
+                        return (
+                          <pre className="my-4 rounded-xl overflow-x-auto border border-slate-800 bg-slate-900 text-slate-100 p-4 font-mono text-sm leading-relaxed">
+                            <code className={className} {...props}>{children}</code>
+                          </pre>
+                        );
+                      }
+                      return (
                         <code className="bg-slate-200 text-slate-800 px-1.5 py-0.5 rounded font-mono text-xs font-semibold" {...props}>
                           {children}
                         </code>

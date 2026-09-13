@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { GraduationCap, ArrowRight, Mail, Lock, User, BookOpen } from 'lucide-react';
+import { GraduationCap, ArrowRight, ArrowLeft, Mail, Lock, User, BookOpen } from 'lucide-react';
 
 const API_BASE = 'http://127.0.0.1:8000';
 
-export default function AuthPage({ onAuthSuccess }) {
+export default function AuthPage({ onAuthSuccess, initialRole = 'Student', onBackToLanding }) {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
-    role: '' // Starts completely blank
+    role: initialRole || 'Student'
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -94,6 +94,17 @@ export default function AuthPage({ onAuthSuccess }) {
       <div className="absolute top-[-15%] left-[-10%] w-[550px] h-[550px] rounded-full bg-blue-400/20 blur-[130px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-10%] w-[600px] h-[600px] rounded-full bg-blue-600/10 blur-[140px] pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+
+      {onBackToLanding && (
+        <button
+          type="button"
+          onClick={onBackToLanding}
+          className="absolute top-6 left-6 z-20 text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-2 bg-white/90 hover:bg-white border border-slate-200 px-4 py-2.5 rounded-xl shadow-xs transition-all cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to Portal Overview</span>
+        </button>
+      )}
 
       {/* Main Form Card */}
       <div className="relative w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-xl shadow-blue-900/5 p-8 sm:p-10 transition-all">

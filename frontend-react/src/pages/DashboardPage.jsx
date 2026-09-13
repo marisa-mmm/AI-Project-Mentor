@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { 
   FolderKanban, 
@@ -10,14 +10,37 @@ import {
   Code2, 
   Calendar,
   LogOut,
-  UserCheck
+  UserCheck,
+  Bell,
+  ChevronDown,
+  Check
 } from 'lucide-react';
 
 const API_BASE = 'http://127.0.0.1:8000';
 
-export default function DashboardPage({ user, onLogout, onNavigateToWorkspace, onSelectProject }) {
+export default function DashboardPage({ 
+  user, 
+  onLogout, 
+  onNavigateToWorkspace, 
+  onSelectProject,
+  hasUnreadNotice = false,
+  onOpenNoticeboard
+}) {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedStatus, setSelectedStatus] = useState('All Statuses');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (filterRef.current && !filterRef.current.contains(e.target)) {
+        setFilterOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   useEffect(() => {
     fetchProjects();
@@ -26,6 +49,7 @@ export default function DashboardPage({ user, onLogout, onNavigateToWorkspace, o
   const fetchProjects = async () => {
     if (!user?.email) return;
     try {
+      setLoading(true);
       const res = await axios.get(`${API_BASE}/api/user/history?email=${encodeURIComponent(user.email)}`);
       setProjects(res.data || []);
     } catch (err) {
@@ -36,9 +60,50 @@ export default function DashboardPage({ user, onLogout, onNavigateToWorkspace, o
   };
 
   const total = projects.length;
-  const completed = projects.filter(p => p.approval_status === 'Approved' || p.status === 'Completed').length;
-  const inReview = projects.filter(p => p.approval_status === 'Pending Review').length;
-  const inProgress = total - completed - inReview > 0 ? total - completed - inReview : (total > 0 && completed === 0 ? total : 0);
+
+  // Completed: Approved projects or 100% complete
+  const completedCount = projects.filter(p => {
+    const status = (p.approval_status || '').toLowerCase();
+    const progressVal = p.progress?.completion_percentage || 0;
+    return status.includes('approved') || progressVal >= 100;
+  }).length;
+
+  // In Review: Strictly pending evaluation
+  const inReviewCount = projects.filter(p => {
+    const status = (p.approval_status || 'Pending Review').toLowerCase();
+    return status.includes('pending') || status.includes('review');
+  }).length;
+
+  // In Progress: Has active progress (> 0 and < 100) or status is 'needs revision', but NOT already approved
+  const inProgressCount = projects.filter(p => {
+    const status = (p.approval_status || '').toLowerCase();
+    const progressVal = p.progress?.completion_percentage || 0;
+    const isApproved = status.includes('approved') || progressVal >= 100;
+    if (isApproved) return false;
+    return progressVal > 0 || status.includes('revision') || status.includes('in progress');
+  }).length;
+
+  const statusOptions = [
+    { label: 'All Statuses', count: total },
+    { label: 'Approved', count: completedCount },
+    { label: 'In Progress', count: inProgressCount },
+    { label: 'In Review', count: inReviewCount }
+  ];
+  const filteredCount = statusOptions.find(o => o.label === selectedStatus)?.count ?? total;
+
+  const filteredProjects = projects.filter(proj => {
+    const status = (proj.approval_status || 'Pending Review').toLowerCase();
+    const progressVal = proj.progress?.completion_percentage || 0;
+    const isApproved = status.includes('approved') || progressVal >= 100;
+
+    if (selectedStatus === 'All Statuses' || selectedStatus === 'All') return true;
+    if (selectedStatus === 'Approved') return isApproved;
+    if (selectedStatus === 'In Review') return status.includes('pending') || status.includes('review');
+    if (selectedStatus === 'In Progress') {
+      return !isApproved && (progressVal > 0 || status.includes('revision') || status.includes('in progress'));
+    }
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -56,6 +121,23 @@ export default function DashboardPage({ user, onLogout, onNavigateToWorkspace, o
 
           {/* User Profile & Sign Out Controls */}
           <div className="flex items-center gap-3 shrink-0">
+            {/* Announcement Notification Bell */}
+            <button
+              onClick={onOpenNoticeboard}
+              className="relative p-3 bg-white hover:bg-slate-50 border border-slate-200 hover:border-blue-500 rounded-2xl text-slate-700 hover:text-blue-600 transition-all cursor-pointer shadow-xs group"
+              title="Cohort Noticeboard & Announcements"
+            >
+              <Bell className="w-5 h-5 stroke-[2.2] group-hover:scale-110 transition-transform" />
+              {hasUnreadNotice && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-rose-600 text-[9px] font-black text-white items-center justify-center ring-2 ring-white shadow-xs">
+                    !
+                  </span>
+                </span>
+              )}
+            </button>
+
             <div className="flex items-center gap-3.5 bg-slate-50 border border-slate-300 py-2 px-4 rounded-2xl shadow-xs">
               <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
                 <UserCheck className="w-5 h-5 stroke-[2.5]" />
@@ -121,7 +203,7 @@ export default function DashboardPage({ user, onLogout, onNavigateToWorkspace, o
                 <CheckCircle2 className="w-5 h-5" />
               </div>
             </div>
-            <p className="text-4xl font-black text-emerald-600 mt-3">{completed}</p>
+            <p className="text-4xl font-black text-emerald-600 mt-3">{completedCount}</p>
             <p className="text-xs font-bold text-slate-400 mt-1">Approved & finalized</p>
           </div>
 
@@ -132,7 +214,7 @@ export default function DashboardPage({ user, onLogout, onNavigateToWorkspace, o
                 <Clock className="w-5 h-5" />
               </div>
             </div>
-            <p className="text-4xl font-black text-amber-600 mt-3">{inReview}</p>
+            <p className="text-4xl font-black text-amber-600 mt-3">{inReviewCount}</p>
             <p className="text-xs font-bold text-slate-400 mt-1">Pending faculty evaluation</p>
           </div>
 
@@ -143,18 +225,56 @@ export default function DashboardPage({ user, onLogout, onNavigateToWorkspace, o
                 <AlertCircle className="w-5 h-5" />
               </div>
             </div>
-            <p className="text-4xl font-black text-blue-600 mt-3">{inProgress}</p>
+            <p className="text-4xl font-black text-blue-600 mt-3">{inProgressCount}</p>
             <p className="text-xs font-bold text-slate-400 mt-1">Active development phase</p>
           </div>
         </div>
 
         {/* Project List */}
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 sm:p-8">
-          <div className="mb-6">
-            <h3 className="text-xl font-black text-slate-900">Your Project Blueprints</h3>
-            <p className="text-sm font-semibold text-slate-500 mt-1">
-              Click any project to inspect documentation, milestones, and thesis tasks.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+            <div>
+              <h3 className="text-xl font-black text-slate-900">Your Project Blueprints</h3>
+              <p className="text-sm font-semibold text-slate-500 mt-1">
+                Click any project to inspect documentation, milestones, and thesis tasks.
+              </p>
+            </div>
+            <div className="relative" ref={filterRef}>
+              <button
+                type="button"
+                onClick={() => setFilterOpen(!filterOpen)}
+                className="flex items-center gap-3 px-4 py-2.5 bg-white border border-slate-200/90 hover:border-blue-500 rounded-2xl shadow-xs transition-all cursor-pointer text-sm font-bold text-slate-800"
+              >
+                <span>{selectedStatus}</span>
+                <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs font-black">
+                  {filteredCount}
+                </span>
+                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${filterOpen ? 'rotate-180 text-blue-600' : ''}`} />
+              </button>
+
+              {filterOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200/90 rounded-2xl shadow-xl overflow-hidden z-50 p-2 space-y-1 animate-in fade-in zoom-in-95 duration-100">
+                  {statusOptions.map((opt) => (
+                    <div
+                      key={opt.label}
+                      onClick={() => {
+                        setSelectedStatus(opt.label);
+                        setFilterOpen(false);
+                      }}
+                      className={`px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center justify-between cursor-pointer transition-all ${
+                        selectedStatus === opt.label ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span>{opt.label}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-slate-400 text-[11px] font-bold">{opt.count}</span>
+                        {selectedStatus === opt.label && <Check className="w-3.5 h-3.5 text-blue-600 stroke-[3]"/>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {loading ? (
@@ -177,8 +297,8 @@ export default function DashboardPage({ user, onLogout, onNavigateToWorkspace, o
               </button>
             </div>
           ) : (
-            <div className="space-y-4">
-              {projects.map((proj, idx) => {
+            <div className="max-h-[520px] overflow-y-auto pr-2 space-y-4 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
+              {filteredProjects.map((proj, idx) => {
                 const details = proj.project_details || {};
                 const name = details.name || proj.name || "Untitled Project";
                 const domain = details.domain || "Applied Software Engineering";
