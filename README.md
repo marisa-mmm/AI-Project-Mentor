@@ -170,7 +170,7 @@ npm install
 # Start development server
 npm run dev
 ```
-Open `http://localhost:5173` in your browser to access the application.
+Open `http://localhost:5174` in your browser to access the application.
 
 ---
 
