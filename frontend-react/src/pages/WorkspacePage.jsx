@@ -200,22 +200,33 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
 
   const getContentForTab = (tabId) => {
     if (!blueprint) return '';
+    let content = '';
     switch (tabId) {
       case 'idea':
-        return blueprint.idea_evaluation || '';
+        content = blueprint.idea_evaluation || '';
+        break;
       case 'scope':
-        return blueprint.scope_definition || '';
+        content = blueprint.scope_definition || '';
+        break;
       case 'tech':
-        return blueprint.technology_stack || '';
+        content = blueprint.technology_stack || '';
+        break;
       case 'planning':
-        return blueprint.time_planning || blueprint.timeline_milestones || '';
+        content = blueprint.time_planning || blueprint.timeline_milestones || '';
+        break;
       case 'risk':
-        return blueprint.risk_assessment || '';
+        content = blueprint.risk_assessment || '';
+        break;
       case 'thesis':
-        return blueprint.thesis_format || blueprint.documentation_plan || '';
+        content = blueprint.thesis_format || blueprint.documentation_plan || '';
+        break;
       default:
-        return '';
+        content = '';
     }
+    if (typeof content === 'object' && content !== null) {
+      return JSON.stringify(content, null, 2);
+    }
+    return String(content || '');
   };
 
   return (
@@ -225,13 +236,15 @@ export default function WorkspacePage({ user, selectedBlueprint }) {
         <div>
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-black uppercase tracking-wider mb-2">
             <Sparkles className="w-4 h-4"/>
-            AI Project Creator
+            {screen === 3 && blueprint ? "Project Blueprint View" : "AI Project Creator"}
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            Design Your Project Blueprint
+            {screen === 3 && blueprint ? getProjectName() : "Design Your Project Blueprint"}
           </h1>
           <p className="text-base font-medium text-slate-500 mt-1">
-            Let the AI multi-agent committee formulate your scope, architecture, and timeline.
+            {screen === 3 && blueprint 
+              ? `${blueprint.project_details?.domain || domain || 'Applied Engineering'} • ${blueprint.project_details?.duration_months || durationMonths || 3} Months Duration`
+              : "Let the AI multi-agent committee formulate your scope, architecture, and timeline."}
           </p>
         </div>
 

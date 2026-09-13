@@ -309,11 +309,14 @@ export default function DashboardPage({
                 return (
                   <div
                     key={idx}
-                    className="flex flex-col md:flex-row md:items-center justify-between p-6 rounded-2xl border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all bg-slate-50/60 hover:bg-white gap-5"
+                    onClick={() => {
+                      if (onSelectProject) onSelectProject(proj);
+                    }}
+                    className="flex flex-col md:flex-row md:items-center justify-between p-6 rounded-2xl border border-slate-200 hover:border-blue-500 hover:shadow-md transition-all bg-slate-50/60 hover:bg-white gap-5 cursor-pointer group"
                   >
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <h4 className="text-lg font-black text-slate-900">{name}</h4>
+                        <h4 className="text-lg font-black text-slate-900 group-hover:text-blue-600 transition-colors">{name}</h4>
                         <span
                           className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider ${
                             status === 'Approved'
@@ -340,11 +343,12 @@ export default function DashboardPage({
                     </div>
 
                     <button
-                      onClick={() => {
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
                         if (onSelectProject) onSelectProject(proj);
-                        onNavigateToWorkspace();
                       }}
-                      className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white hover:bg-blue-600 hover:text-white text-slate-800 border border-slate-300 hover:border-blue-600 text-sm font-extrabold rounded-xl transition-all shrink-0 cursor-pointer shadow-xs"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white hover:bg-blue-600 hover:text-white text-slate-800 border border-slate-300 hover:border-blue-600 text-sm font-extrabold rounded-xl transition-all shrink-0 cursor-pointer shadow-xs group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600"
                     >
                       <span>Open Blueprint</span>
                       <ArrowRight className="w-4 h-4" />

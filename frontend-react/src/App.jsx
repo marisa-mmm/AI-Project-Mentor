@@ -184,7 +184,7 @@ export default function App() {
                 setCurrentTab('workspace');
               }}
               onSelectProject={(proj) => {
-                setActiveBlueprint(proj);
+                setActiveBlueprint({ ...proj });
                 setCurrentTab('workspace');
               }}
             />
