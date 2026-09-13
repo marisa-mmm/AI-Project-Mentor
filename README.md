@@ -14,10 +14,11 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  <b>A smart, all-in-one web platform designed for college engineering departments.</b><br/>
-  Helps students plan, build, track, and document their final-year projects, while giving professors an easy way to guide teams, check weekly progress, and grade final viva defenses fairly.
+  <b>A smart, all-in-one mentor for ANYONE who wants to build a project but doesn't know where to start.</b><br/>
+  From first-time beginner ideas and semester mini-projects to hackathon MVPs and university final viva defenses — AI Project Mentor turns your raw thoughts into a structured architecture, tracks your progress, and guides you all the way to completion.
 </p>
 
+[🎯 Who Is This For?](#-who-is-this-for) •
 [💡 Why This Platform?](#-why-ai-project-mentor) •
 [🔄 How It Works](#-how-it-works-step-by-step) •
 [🤖 The 4 AI Agents](#-the-4-ai-planning-agents) •
@@ -30,17 +31,30 @@
 
 ---
 
+## 🎯 Who Is This For?
+
+**AI Project Mentor is NOT just for final-year college capstones.** It is built for **anyone with a project idea who needs guidance on where to start and how to finish**:
+
+* 🐣 **Complete Beginners & Self-Learners**: Have a cool idea, but don't know whether to use Python, React, Node.js, or SQL? Type your idea in plain English, and the AI will recommend the easiest tech stack and a step-by-step roadmap to build it.
+* ⚡ **Hackathon Teams & Rapid Prototypers**: Need to design a solid MVP architecture under time pressure? Generate user personas, boundaries, and sprint milestones in seconds.
+* 📚 **1st, 2nd & 3rd Year Mini-Projects**: Perfect for semester assignments and college lab projects that need organized tasks, Kanban tracking, and clean technical documentation.
+* 🎓 **Final-Year Engineering Students**: Everything you need to ace your capstone — bi-weekly sprint logging, an automated 14-chapter thesis generator ready for black-book binding, and an AI mock viva examiner.
+* 👩‍🏫 **Professors, Guides & Mentors**: A unified dashboard to track multiple teams, review sprint hours, clear blockers, and grade final defenses fairly using a digital 50-mark rubric.
+
+---
+
 ## 💡 Why AI Project Mentor?
 
-Final year engineering projects are a major milestone for every engineering student, but both students and teachers face common problems:
+Starting a new project is exciting, but most people get stuck before they even write their first line of code:
 
-| ❌ The Old Way (Common Problems) | ✅ With AI Project Mentor (The Solution) |
+| ❌ Common Roadblocks (Where People Get Stuck) | ✅ With AI Project Mentor (How It Helps You) |
 |---|---|
-| **Confusing Project Scope**: Students pick huge ideas and get stuck halfway through. | 🤖 **AI Architecture Wizard**: Breaks your raw idea into realistic goals, features, and tech stacks. |
-| **No Regular Tracking**: Teachers have no idea what students did until the last week. | ⏱️ **Bi-Weekly Progress Logs**: Students log hours and weekly tasks; guides review and approve them online. |
-| **Viva Exam Fear**: Students don't know what tough questions the external examiner will ask. | 💬 **AI Viva Preparation Chat**: Practice with an AI examiner trained on your exact project stack. |
-| **Thesis Formatting Panic**: Students spend weeks fighting Word margins and formatting rules. | 📄 **1-Click 14-Chapter Thesis**: Generates complete academic reports ready for printing in PDF and Word (`.docx`). |
-| **Unfair or Inconsistent Grading**: Different teachers give marks differently on paper. | ⚖️ **Standard 50-Mark Rubric**: Clear digital scorecard covering Architecture, Code Demo, Report, and Viva Q&A. |
+| **Don't Know Where to Start**: You have a vision, but no clue which tools, databases, or frameworks to pick. | 🤖 **AI Architecture Wizard**: Turns your raw idea into realistic goals, recommended tech stacks, and step-by-step phases. |
+| **Losing Motivation & Getting Lost**: Big projects feel overwhelming without clear daily or weekly steps. | 📋 **Interactive Kanban Board**: Breaks the whole project into bite-sized milestones (*To Do*, *In Progress*, *Done*). |
+| **No Progress Accountability**: Without regular check-ins, projects get delayed until the very last minute. | ⏱️ **Bi-Weekly Progress Logs**: Log hours worked, track milestones, report blockers, and receive guide sign-offs. |
+| **Fear of Viva & Technical Questions**: You built something, but don't know how to defend your choices to evaluators. | 💬 **AI Viva Preparation Chat**: A 24/7 mock examiner trained on your exact project stack to quiz you and build your confidence. |
+| **Thesis & Report Formatting Pain**: Writing a 14-chapter report and fixing margins in Word takes days of frustrating work. | 📄 **1-Click 14-Chapter Thesis**: Generates complete academic reports ready for printing in PDF and Word (`.docx`). |
+| **Inconsistent or Subjective Grading**: College evaluations often lack clear, standardized digital rubrics. | ⚖️ **Standard 50-Mark Rubric**: Clear digital scorecard covering Architecture, Code Demo, Documentation, and Viva Defense. |
 
 ---
 

@@ -43,7 +43,7 @@ export default function LandingPage({ onEnterStudent, onEnterFaculty }) {
           </h1>
 
           <p className="text-base sm:text-xl font-medium text-slate-500 text-center max-w-2xl mx-auto mt-2 sm:mt-4 leading-relaxed">
-            A unified academic ecosystem bridging student architecture planning with faculty evaluation, bi-weekly mentor reporting, and formal viva defense scorecards.
+            For anyone who wants to build a project but doesn't know where to start. Transform your raw idea into a structured architecture, track milestones, and prepare all the way to final viva defense.
           </p>
 
           {/* Primary Hero Action Buttons */}
