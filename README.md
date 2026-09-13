@@ -21,7 +21,7 @@
 [🎯 Who Is This For?](#-who-is-this-for) •
 [💡 Why This Platform?](#-why-ai-project-mentor) •
 [🔄 How It Works](#-how-it-works-step-by-step) •
-[🤖 The 4 AI Agents](#-the-4-ai-planning-agents) •
+[🤖 The 6 AI Agents](#-the-6-ai-planning-agents) •
 [✨ Student Features](#-student-platform-features) •
 [👩‍🏫 Faculty Features](#-faculty-portal-features) •
 [⚖️ Viva Rubric](#-standardized-50-mark-viva-defense-rubric) •
@@ -35,7 +35,7 @@
 
 **AI Project Mentor is NOT just for final-year college capstones.** It is built for **anyone with a project idea who needs guidance on where to start and how to finish**:
 
-* 🐣 **Complete Beginners & Self-Learners**: Have a cool idea, but don't know whether to use Python, React, Node.js, or SQL? Type your idea in plain English, and the AI will recommend the easiest tech stack and a step-by-step roadmap to build it.
+* 🐣 **Complete Beginners & Self-Learners**: Have a cool idea, but don't know whether to use Python, React, Node.js, or SQL? Type your idea in plain English, and the 6 AI agents will recommend the easiest tech stack and a step-by-step roadmap to build it.
 * ⚡ **Hackathon Teams & Rapid Prototypers**: Need to design a solid MVP architecture under time pressure? Generate user personas, boundaries, and sprint milestones in seconds.
 * 📚 **1st, 2nd & 3rd Year Mini-Projects**: Perfect for semester assignments and college lab projects that need organized tasks, Kanban tracking, and clean technical documentation.
 * 🎓 **Final-Year Engineering Students**: Everything you need to ace your capstone — bi-weekly sprint logging, an automated 14-chapter thesis generator ready for black-book binding, and an AI mock viva examiner.
@@ -68,7 +68,7 @@ graph TD
     classDef doc fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f;
 
     subgraph Step1["1. Project Inception & Planning"]
-        A["💡 Student enters project idea & skill level"]:::student --> B["🤖 4 AI Agents create complete Blueprint"]:::ai
+        A["💡 Student enters project idea & skill level"]:::student --> B["🤖 6 AI Agents create complete Blueprint"]:::ai
         B --> C["👩‍🏫 Faculty Guide reviews and approves blueprint"]:::faculty
     end
 
@@ -88,9 +88,9 @@ graph TD
 
 ---
 
-## 🤖 The 4 AI Planning Agents
+## 🤖 The 6 AI Planning Agents
 
-When a student submits an idea, our system does not just call a generic chatbot. It runs a team of **4 specialized AI agents** powered by ultra-fast Groq LLMs (`llama-3.3-70b-versatile`):
+When you submit an idea, the platform launches a council of **6 specialized AI agents** powered by ultra-fast Groq LLMs (`llama-3.3-70b-versatile`):
 
 ```mermaid
 flowchart LR
@@ -100,18 +100,22 @@ flowchart LR
 
     In["💡 Your Raw Project Idea"]:::input --> Engine["🧠 Groq Multi-Agent Engine"]:::agent
     
-    Engine --> A1["🎯 1. Scope Agent<br/>Defines goals, user roles & boundaries"]:::agent
-    Engine --> A2["⚙️ 2. Tech Stack Agent<br/>Recommends database, frontend & backend"]:::agent
-    Engine --> A3["📅 3. Timeline Agent<br/>Breaks project into 4 semester phases"]:::agent
-    Engine --> A4["🛡️ 4. Risk & Viva Agent<br/>Identifies weak points & examiner traps"]:::agent
+    Engine --> A1["💡 1. Idea Evaluation<br/>Novelty, feasibility & concept check"]:::agent
+    Engine --> A2["🎯 2. Project Scope<br/>Goals, deliverables & boundaries"]:::agent
+    Engine --> A3["⚙️ 3. Tech Stack<br/>Frontend, backend, DB & tradeoffs"]:::agent
+    Engine --> A4["📅 4. Time Planning<br/>Semester roadmap & weekly milestones"]:::agent
+    Engine --> A5["🛡️ 5. Risk Assessment<br/>Vulnerabilities & examiner traps"]:::agent
+    Engine --> A6["📄 6. Thesis Format<br/>14-chapter academic documentation"]:::agent
 
-    A1 & A2 & A3 & A4 --> Out["📋 Complete Project Blueprint"]:::out
+    A1 & A2 & A3 & A4 & A5 & A6 --> Out["📋 Complete Project Blueprint"]:::out
 ```
 
-1. **🎯 Scope & Problem Agent**: Clearly explains the problem, who will use the app, and what features are included or excluded (prevents taking on too much work).
-2. **⚙️ Tech Stack Architect**: Recommends the best frontend, backend, database, and libraries based on student skill level, explaining why each tool is chosen.
-3. **📅 Timeline & Milestone Agent**: Creates a realistic 4-phase semester roadmap with weekly goals.
-4. **🛡️ Viva Defense & Risk Auditor**: Predicts the hardest questions external examiners will ask and warns about common architectural mistakes before coding starts.
+1. **💡 Idea Evaluation Agent**: Validates your initial concept, analyzes originality, checks practical feasibility, and helps refine vague thoughts into an achievable engineering project.
+2. **🎯 Project Scope Agent**: Clearly explains the problem formulation, primary objectives, key features, target user personas, and explicit boundaries (what is in-scope vs out-of-scope).
+3. **⚙️ Tech Stack Agent**: Recommends the optimal frontend, backend, database, and libraries based on your skill level, explaining why each tool is chosen and the architectural tradeoffs.
+4. **📅 Time Planning Agent**: Creates a realistic 4-phase development roadmap with weekly goals, milestones, and sprint tasks.
+5. **🛡️ Risk Assessment Agent**: Identifies technical vulnerabilities, potential bottlenecks, and security failure points while predicting tough viva examiner questions.
+6. **📄 Thesis Format Agent**: Formats the entire blueprint into standard academic manuscript chapters ready for formal documentation and black-book thesis binding.
 
 ---
 
@@ -213,7 +217,7 @@ AI-Project-Mentor/
 │   │   │   ├── AuthPage.jsx                  # Sign in & registration with role guard
 │   │   │   ├── DashboardPage.jsx             # Student project hub & progress stats
 │   │   │   ├── FacultyDashboardPage.jsx      # Mentees tracking & department roster
-│   │   │   ├── WorkspacePage.jsx             # 4-Agent blueprint generation wizard
+│   │   │   ├── WorkspacePage.jsx             # 6-Agent blueprint generation wizard
 │   │   │   ├── BenchmarksPage.jsx            # Explore past projects & viva scores
 │   │   │   ├── VivaGradingPage.jsx           # Committee 50-mark viva grading portal
 │   │   │   ├── NoticeboardPage.jsx           # Institutional cohort announcements
@@ -245,7 +249,7 @@ All backend routes are documented with interactive Swagger docs at `http://127.0
 |:---:|---|:---:|---|
 | `POST` | `/api/auth/register` | Anyone | Create a new student or faculty account. |
 | `POST` | `/api/auth/login` | Anyone | Sign in and receive an active user session. |
-| `POST` | `/api/generate-blueprint` | Student | Run the 4-agent AI council to create a project blueprint. |
+| `POST` | `/api/generate-blueprint` | Student | Run the 6-agent AI council to create a project blueprint. |
 | `GET` | `/api/user/history` | Student | Get all saved projects belonging to the logged-in student. |
 | `GET` | `/api/faculty/blueprints` | Faculty | View all project submissions across the whole department. |
 | `POST` | `/api/faculty/review` | Faculty | Submit supervisor review comments and approval verdicts. |
@@ -339,7 +343,7 @@ Make sure you have installed:
 
 ### 👨‍🎓 For Students:
 1. Open **http://localhost:5174** and choose **"Student Sign In"** (or click Register to create your account).
-2. Go to **Workspace** and type in your project idea. Click **Generate Blueprint** to let the 4 AI agents plan your architecture.
+2. Go to **Workspace** and type in your project idea. Click **Generate Blueprint** to let the 6 AI agents plan your architecture.
 3. Open the **Kanban Board** to organize your tasks into *To Do*, *In Progress*, and *Done*.
 4. Go to **My Progress** to update your completion slider and log your bi-weekly work hours.
 5. Click **AI Mentor Chat** whenever you want to test yourself with mock viva questions.
