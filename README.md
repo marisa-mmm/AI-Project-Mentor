@@ -38,8 +38,8 @@
 * 🐣 **Complete Beginners & Self-Learners**: Have a cool idea, but don't know whether to use Python, React, Node.js, or SQL? Type your idea in plain English, and the 6 AI agents will recommend the easiest tech stack and a step-by-step roadmap to build it.
 * ⚡ **Hackathon Teams & Rapid Prototypers**: Need to design a solid MVP architecture under time pressure? Generate user personas, boundaries, and sprint milestones in seconds.
 * 📚 **1st, 2nd & 3rd Year Mini-Projects**: Perfect for semester assignments and college lab projects that need organized tasks, Kanban tracking, and clean technical documentation.
-* 🎓 **Final-Year Engineering Students**: Everything you need to ace your capstone — bi-weekly sprint logging, an automated 14-chapter thesis generator ready for black-book binding, and an AI mock viva examiner.
-* 👩‍🏫 **Professors, Guides & Mentors**: A unified dashboard to track multiple teams, review sprint hours, clear blockers, and grade final defenses fairly using a digital 50-mark rubric.
+* 🎓 **Final-Year Engineering Students**: Everything you need to ace your capstone — milestone tracking, an automated 14-chapter thesis generator ready for black-book binding, and an AI mock viva examiner.
+* 👩‍🏫 **Professors, Guides & Mentors**: An evaluation suite to review submitted blueprints, broadcast announcements, and grade final defenses fairly using a digital 50-mark rubric.
 
 ---
 
@@ -51,7 +51,7 @@ Starting a new project is exciting, but most people get stuck before they even w
 |---|---|
 | **Don't Know Where to Start**: You have a vision, but no clue which tools, databases, or frameworks to pick. | 🤖 **AI Architecture Wizard**: Turns your raw idea into realistic goals, recommended tech stacks, and step-by-step phases. |
 | **Losing Motivation & Getting Lost**: Big projects feel overwhelming without clear daily or weekly steps. | 📋 **Interactive Kanban Board**: Breaks the whole project into bite-sized milestones (*To Do*, *In Progress*, *Done*). |
-| **No Progress Accountability**: Without regular check-ins, projects get delayed until the very last minute. | ⏱️ **Bi-Weekly Progress Logs**: Log hours worked, track milestones, report blockers, and receive guide sign-offs. |
+| **No Clear Progress Tracking**: Without clear milestones, projects get delayed until the very last minute. | 📈 **Live Milestone Tracking**: Visual completion sliders and status updates keep your project on schedule. |
 | **Fear of Viva & Technical Questions**: You built something, but don't know how to defend your choices to evaluators. | 💬 **AI Viva Preparation Chat**: A 24/7 mock examiner trained on your exact project stack to quiz you and build your confidence. |
 | **Thesis & Report Formatting Pain**: Writing a 14-chapter report and fixing margins in Word takes days of frustrating work. | 📄 **1-Click 14-Chapter Thesis**: Generates complete academic reports ready for printing in PDF and Word (`.docx`). |
 | **Inconsistent or Subjective Grading**: College evaluations often lack clear, standardized digital rubrics. | ⚖️ **Standard 50-Mark Rubric**: Clear digital scorecard covering Architecture, Code Demo, Documentation, and Viva Defense. |
@@ -72,17 +72,16 @@ graph TD
         B --> C["👩‍🏫 Faculty Guide reviews and approves blueprint"]:::faculty
     end
 
-    subgraph Step2["2. Building & Weekly Progress"]
-        C --> D["📋 Student tracks tasks on Kanban Board"]:::student
-        D --> E["⏱️ Student logs bi-weekly hours & blockers"]:::student
-        E --> F["✅ Guide reviews & verifies sprint progress"]:::faculty
-        D --> G["💬 Student prepares with AI Viva Chatbot"]:::ai
+    subgraph Step2["2. Building & Milestone Tracking"]
+        C --> D["📋 Student manages tasks on Kanban Board"]:::student
+        D --> E["📈 Student updates phase progress & milestones"]:::student
+        D --> F["💬 Student prepares with AI Viva Chatbot"]:::ai
     end
 
     subgraph Step3["3. Thesis & Final Examination"]
-        G --> H["📑 Export complete 14-Chapter Thesis PDF & Word"]:::doc
-        H --> I["⚖️ Faculty grades defense with 50-Mark Viva Scorecard"]:::faculty
-        I --> J["🏆 Final marks and verdict recorded in system"]:::faculty
+        F --> G["📑 Export complete 14-Chapter Thesis PDF & Word"]:::doc
+        G --> H["⚖️ Faculty grades defense with 50-Mark Viva Scorecard"]:::faculty
+        H --> I["🏆 Final marks and verdict recorded in system"]:::faculty
     end
 ```
 
@@ -127,7 +126,6 @@ Everything a student needs to take a project from concept to final submission:
 * 📋 **Interactive Kanban Board**: Move milestone cards between **To Do**, **In Progress**, and **Done** to keep your team organized.
 * 💬 **AI Viva Preparation Chat**: A 24/7 AI mock examiner that knows your project's code and tech stack. Ask it to quiz you or explain tricky concepts.
 * 📈 **Live Progress Slider**: Update your completion percentage anytime to let your guide know where you stand.
-* ⏱️ **Bi-Weekly Hours & Blocker Log**: Log hours worked each fortnight, list tasks finished, and report any technical blockers to get help from your mentor.
 * 📄 **14-Chapter Thesis Generator**: Automatically turns your project architecture and progress into a formal university manuscript. Download it with one click as **PDF** or **Word (`.docx`)** ready for black-book binding!
 
 ---
@@ -137,8 +135,7 @@ Everything a student needs to take a project from concept to final submission:
 A complete control center for project guides, department heads, and external examiners:
 
 * 🏛️ **Project Approval Hub**: Read submitted blueprints, check student tech stacks, and grant formal verdicts (**Approved**, **Needs Revision**, or **Rejected**).
-* 👥 **My Mentees Dashboard**: View all students assigned to you, check how many hours they spent, and verify their bi-weekly sprint submissions.
-* 🏢 **Department Roster**: A master list of all college final-year projects, showing team members, assigned guides, and current review status.
+* 📊 **Batch Submissions Overview**: Monitor student project submissions, architecture designs, and live development phases.
 * 📢 **Department Noticeboard**: Post announcements about submission deadlines, format guidelines, or viva schedules that appear instantly on student dashboards.
 * ⚖️ **Standard 50-Mark Viva Scorecard**: Grade students during their live presentation using an easy point-and-click digital rubric.
 
@@ -216,7 +213,7 @@ AI-Project-Mentor/
 │   │   │   ├── LandingPage.jsx               # Public university portal landing page
 │   │   │   ├── AuthPage.jsx                  # Sign in & registration with role guard
 │   │   │   ├── DashboardPage.jsx             # Student project hub & progress stats
-│   │   │   ├── FacultyDashboardPage.jsx      # Mentees tracking & department roster
+│   │   │   ├── FacultyDashboardPage.jsx      # Faculty blueprint review hub & approvals
 │   │   │   ├── WorkspacePage.jsx             # 6-Agent blueprint generation wizard
 │   │   │   ├── BenchmarksPage.jsx            # Explore past projects & viva scores
 │   │   │   ├── VivaGradingPage.jsx           # Committee 50-mark viva grading portal
@@ -253,9 +250,6 @@ All backend routes are documented with interactive Swagger docs at `http://127.0
 | `GET` | `/api/user/history` | Student | Get all saved projects belonging to the logged-in student. |
 | `GET` | `/api/faculty/blueprints` | Faculty | View all project submissions across the whole department. |
 | `POST` | `/api/faculty/review` | Faculty | Submit supervisor review comments and approval verdicts. |
-| `POST` | `/api/mentor/assign` | Faculty | Claim or assign a faculty guide to a student project. |
-| `POST` | `/api/student/submit-log` | Student | Submit bi-weekly hours, accomplishments, and blockers. |
-| `POST` | `/api/mentor/verify-log` | Faculty | Approve or ask for clarification on student sprint logs. |
 | `POST` | `/api/faculty/viva-grading` | Faculty | Submit the official 50-mark viva score and verdict. |
 | `GET` | `/api/faculty/viva-scores` | Faculty | View all recorded viva scores for archiving. |
 | `POST` | `/api/projects/pitfalls` | Anyone | Generate common mistakes and examiner questions for any topic. |
@@ -345,16 +339,15 @@ Make sure you have installed:
 1. Open **http://localhost:5174** and choose **"Student Sign In"** (or click Register to create your account).
 2. Go to **Workspace** and type in your project idea. Click **Generate Blueprint** to let the 6 AI agents plan your architecture.
 3. Open the **Kanban Board** to organize your tasks into *To Do*, *In Progress*, and *Done*.
-4. Go to **My Progress** to update your completion slider and log your bi-weekly work hours.
+4. Go to **My Progress** to update your milestone completion slider.
 5. Click **AI Mentor Chat** whenever you want to test yourself with mock viva questions.
 6. When ready, go to **Thesis Generator** and click **Export PDF** or **Export Word** to download your full thesis!
 
 ### 👩‍🏫 For Faculty & Guides:
 1. Open **http://localhost:5174** and choose **"Faculty Sign In"**.
-2. Go to **Department Roster** to view all student teams and click **Claim as Guide** for your teams.
-3. In **My Mentees**, inspect weekly progress, check reported blockers, and approve sprint logs.
-4. Use **Noticeboard** to post important deadlines or submission announcements.
-5. On final exam day, open **Viva Grading**, enter the team's project name, and record their marks across the 4 standard categories (out of 50).
+2. Review student blueprint submissions, inspect proposed system architectures, and grant formal review verdicts.
+3. Use **Noticeboard** to post important deadlines or submission announcements.
+4. On final exam day, open **Viva Grading**, enter the team's project name, and record their marks across the 4 standard categories (out of 50).
 
 ---
 
